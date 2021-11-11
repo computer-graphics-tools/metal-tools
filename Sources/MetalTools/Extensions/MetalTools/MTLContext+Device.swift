@@ -58,7 +58,7 @@ public extension MTLContext {
 
     func buffer<T>(for type: T.Type,
                    count: Int = 1,
-                   options: MTLResourceOptions) throws -> MTLBuffer {
+                   options: MTLResourceOptions = .cpuCacheModeWriteCombined) throws -> MTLBuffer {
         return try self.device
                        .buffer(for: type,
                                count: count,
@@ -66,14 +66,14 @@ public extension MTLContext {
     }
 
     func buffer<T>(with value: T,
-                   options: MTLResourceOptions) throws -> MTLBuffer {
+                   options: MTLResourceOptions = .cpuCacheModeWriteCombined) throws -> MTLBuffer {
         return try self.device
                        .buffer(with: value,
                                options: options)
     }
 
     func buffer<T>(with values: [T],
-                   options: MTLResourceOptions) throws -> MTLBuffer {
+                   options: MTLResourceOptions = .cpuCacheModeWriteCombined) throws -> MTLBuffer {
         return try self.device
                        .buffer(with: values,
                                options: options)

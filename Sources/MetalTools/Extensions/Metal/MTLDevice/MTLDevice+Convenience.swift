@@ -52,7 +52,7 @@ public extension MTLDevice {
 
     func buffer<T>(for type: T.Type,
                    count: Int = 1,
-                   options: MTLResourceOptions) throws -> MTLBuffer {
+                   options: MTLResourceOptions = .cpuCacheModeWriteCombined) throws -> MTLBuffer {
         guard let buffer = self.makeBuffer(length: MemoryLayout<T>.stride * count,
                                            options: options)
         else { throw MetalError.MTLDeviceError.bufferCreationFailed }
@@ -60,7 +60,7 @@ public extension MTLDevice {
     }
 
     func buffer<T>(with value: T,
-                   options: MTLResourceOptions) throws -> MTLBuffer {
+                   options: MTLResourceOptions = .cpuCacheModeWriteCombined) throws -> MTLBuffer {
         var value = value
         guard let buffer = self.makeBuffer(bytes: &value,
                                            length: MemoryLayout<T>.stride,
@@ -70,7 +70,7 @@ public extension MTLDevice {
     }
 
     func buffer<T>(with values: [T],
-                   options: MTLResourceOptions) throws -> MTLBuffer {
+                   options: MTLResourceOptions = .cpuCacheModeWriteCombined) throws -> MTLBuffer {
         guard let buffer = self.makeBuffer(bytes: values,
                                            length: MemoryLayout<T>.stride * values.count,
                                            options: options)
