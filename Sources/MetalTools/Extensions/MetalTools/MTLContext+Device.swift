@@ -30,11 +30,13 @@ public extension MTLContext {
     func texture(width: Int,
                  height: Int,
                  pixelFormat: MTLPixelFormat,
-                 usage: MTLTextureUsage = [.shaderRead]) throws -> MTLTexture {
+                 options: MTLResourceOptions = [],
+                 usage: MTLTextureUsage = []) throws -> MTLTexture {
         return try self.device
                        .texture(width: width,
                                 height: height,
                                 pixelFormat: pixelFormat,
+                                options: options,
                                 usage: usage)
     }
 

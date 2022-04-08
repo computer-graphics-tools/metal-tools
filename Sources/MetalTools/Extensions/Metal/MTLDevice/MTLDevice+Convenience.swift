@@ -109,11 +109,13 @@ public extension MTLDevice {
     func texture(width: Int,
                  height: Int,
                  pixelFormat: MTLPixelFormat,
-                 usage: MTLTextureUsage = [.shaderRead]) throws -> MTLTexture {
+                 options: MTLResourceOptions = [],
+                 usage: MTLTextureUsage = []) throws -> MTLTexture {
         let textureDescriptor = MTLTextureDescriptor()
         textureDescriptor.width = width
         textureDescriptor.height = height
         textureDescriptor.pixelFormat = pixelFormat
+        textureDescriptor.resourceOptions = options
         textureDescriptor.usage = usage
         guard let texture = self.makeTexture(descriptor: textureDescriptor)
         else { throw MetalError.MTLDeviceError.textureCreationFailed }
