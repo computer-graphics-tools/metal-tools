@@ -2,6 +2,12 @@ import Metal
 import CoreVideo
 
 public extension MTLPixelFormat {
+    
+    init(osType: OSType) throws {
+        guard let pixelFormat = osType.compatibleMTLPixelFormat
+        else { throw MetalError.MTLPixelFormatError.incompatibleCVPixelFormat }
+        self = pixelFormat
+    }
 
     var compatibleCVPixelFormat: OSType? {
         switch self {

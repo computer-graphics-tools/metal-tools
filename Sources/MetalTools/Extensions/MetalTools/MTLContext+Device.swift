@@ -39,6 +39,16 @@ public extension MTLContext {
                                 options: options,
                                 usage: usage)
     }
+    
+    func texture(iosurface: IOSurfaceRef,
+                 plane: Int = 0,
+                 options: MTLResourceOptions = [],
+                 usage: MTLTextureUsage = []) throws -> MTLTexture {
+        return try self.device.texture(iosurface: iosurface,
+                                       plane: plane,
+                                       options: options,
+                                       usage: usage)
+    }
 
     func depthState(depthCompareFunction: MTLCompareFunction,
                     isDepthWriteEnabled: Bool = true) throws -> MTLDepthStencilState {

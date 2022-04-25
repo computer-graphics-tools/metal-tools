@@ -42,4 +42,7 @@ public enum MetalError {
     public enum MTLBufferError: Error {
         case incompatibleData
     }
+    public enum MTLPixelFormatError: Error {
+        case incompatibleCVPixelFormat
+    }
 }

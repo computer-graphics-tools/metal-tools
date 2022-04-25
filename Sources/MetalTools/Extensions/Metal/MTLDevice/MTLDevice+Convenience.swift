@@ -121,6 +121,28 @@ public extension MTLDevice {
         else { throw MetalError.MTLDeviceError.textureCreationFailed }
         return texture
     }
+    
+    func texture(
+        iosurface: IOSurfaceRef,
+        plane: Int = 0,
+        options: MTLResourceOptions = [],
+        usage: MTLTextureUsage = []
+    ) throws -> MTLTexture {
+        let descriptor = MTLTextureDescriptor()
+        descriptor.width = IOSurfaceGetWidthOfPlane(iosurface, plane)
+        descriptor.height = IOSurfaceGetHeightOfPlane(iosurface, plane)
+        descriptor.pixelFormat = try .init(osType: IOSurfaceGetPixelFormat(iosurface))
+        descriptor.resourceOptions = options
+        descriptor.usage = usage
+        
+        guard let texture = self.makeTexture(
+            descriptor: descriptor,
+            iosurface: iosurface,
+            plane: plane
+        ) else { throw MetalError.MTLDeviceError.textureCreationFailed }
+        
+        return texture
+    }
 
     func maxTextureSize(desiredSize: MTLSize) -> MTLSize {
         let maxSide: Int
