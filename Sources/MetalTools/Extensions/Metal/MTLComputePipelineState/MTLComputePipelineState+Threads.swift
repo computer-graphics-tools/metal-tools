@@ -19,4 +19,11 @@ public extension MTLComputePipelineState {
     
         return MTLSize(width: w, height: h, depth: 1)
     }
+    
+    func max3dThreadgroupSize(depth: Int) -> MTLSize {
+        let w = self.threadExecutionWidth / depth
+        let h = self.maxTotalThreadsPerThreadgroup / w
+    
+        return MTLSize(width: w, height: h, depth: depth)
+    }
 }
