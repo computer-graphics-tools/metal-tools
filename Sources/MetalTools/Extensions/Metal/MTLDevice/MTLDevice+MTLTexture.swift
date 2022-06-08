@@ -39,7 +39,7 @@ public extension MTLDevice {
                 height: cgImage.height,
                 bitsPerComponent: 8,
                 bytesPerRow: cgImage.width,
-                space: CGColorSpace(name: CGColorSpace.linearGray)!,
+                space: CGColorSpaceCreateDeviceGray(),
                 bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue
             )
         } else if colorSpace.model == .rgb {
@@ -50,18 +50,24 @@ public extension MTLDevice {
                 height: cgImage.height,
                 bitsPerComponent: 8,
                 bytesPerRow: cgImage.width * 4,
-                space: CGColorSpace(name: CGColorSpace.genericRGBLinear)!,
+                space: CGColorSpaceCreateDeviceRGB(),
                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
             )
         } else { throw MetalError.MTLDeviceError.textureCreationFailed }
         
-        guard let cgContext = optionalCGContext
-        else { throw MetalError.MTLDeviceError.textureCreationFailed }
-        
-        cgContext.draw(cgImage, in: CGRect(origin: .zero, size: CGSize(width: cgImage.width, height: cgImage.height)))
+        optionalCGContext?.draw(
+            cgImage,
+            in: CGRect(
+                origin: .zero,
+                size: CGSize(
+                    width: cgImage.width,
+                    height: cgImage.height
+                )
+            )
+        )
         
         guard let cgContext = optionalCGContext,
-                let baseAddress = cgContext.data
+              let baseAddress = cgContext.data
         else { throw MetalError.MTLDeviceError.textureCreationFailed }
         
         let texture = try self.texture(
