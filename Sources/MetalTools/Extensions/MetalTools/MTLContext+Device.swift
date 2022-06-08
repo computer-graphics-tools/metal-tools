@@ -26,6 +26,14 @@ public extension MTLContext {
                                                     pixelFormat: pixelFormat,
                                                     sampleCount: sampleCount)
     }
+    
+    func texture(from cgImage: CGImage,
+                 srgb: Bool = false,
+                 usage: MTLTextureUsage = []) throws -> MTLTexture {
+        return try self.device.texture(from: cgImage,
+                                       srgb: srgb,
+                                       usage: usage)
+    }
 
     func texture(width: Int,
                  height: Int,

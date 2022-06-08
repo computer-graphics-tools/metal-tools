@@ -2,7 +2,7 @@ import Metal
 
 public extension MTLDevice {
     
-    func texture(from cgImage: CGImage, usage: MTLTextureUsage = []) throws -> MTLTexture {
+    func texture(from cgImage: CGImage, srgb: Bool = false, usage: MTLTextureUsage = []) throws -> MTLTexture {
         
         // AlphaFirst – the alpha channel is next to the red channel, argb and bgra are both alpha first formats.
         // AlphaLast – the alpha channel is next to the blue channel, rgba and abgr are both alpha last formats.
@@ -43,14 +43,14 @@ public extension MTLDevice {
                 bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue
             )
         } else if colorSpace.model == .rgb {
-            pixelFormat = .rgba8Unorm
+            pixelFormat = srgb ? .rgba8Unorm_srgb : .rgba8Unorm
             optionalCGContext = CGContext(
                 data: nil,
                 width: cgImage.width,
                 height: cgImage.height,
                 bitsPerComponent: 8,
                 bytesPerRow: cgImage.width * 4,
-                space: CGColorSpaceCreateDeviceRGB(),
+                space: srgb ? CGColorSpace(name: CGColorSpace.sRGB)! : CGColorSpaceCreateDeviceRGB(),
                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
             )
         } else { throw MetalError.MTLDeviceError.textureCreationFailed }

@@ -53,10 +53,6 @@ public final class MTLContext {
     public func purgeLibraryCache() {
         self.libraryCache = [:]
     }
-    
-    public func texture(from cgImage: CGImage, usage: MTLTextureUsage = []) throws -> MTLTexture {
-        return try self.device.texture(from: cgImage, usage: usage)
-    }
 
 }
 
