@@ -350,5 +350,156 @@ public extension MTLPixelFormat {
         default: return true
         }
     }
+    
+    var allCases: [MTLPixelFormat] {
+        var formats: [MTLPixelFormat] = [
+            .invalid,
+            .r8Unorm,
+            .r8Snorm,
+            .r8Uint,
+            .r8Sint,
+            .r16Unorm,
+            .r16Snorm,
+            .r16Uint,
+            .r16Sint,
+            .r16Float,
+            .rg8Unorm,
+            .rg8Snorm,
+            .rg8Uint,
+            .rg8Sint,
+            .r32Uint,
+            .r32Sint,
+            .r32Float,
+            .rg16Unorm,
+            .rg16Snorm,
+            .rg16Uint,
+            .rg16Sint,
+            .rg16Float,
+            .rgba8Unorm,
+            .rgba8Unorm_srgb,
+            .rgba8Snorm,
+            .rgba8Uint,
+            .rgba8Sint,
+            .bgra8Unorm,
+            .bgra8Unorm_srgb,
+            .rgb10a2Unorm,
+            .rgb10a2Uint,
+            .rg11b10Float,
+            .rgb9e5Float,
+            .bgr10a2Unorm,
+            .rg32Uint,
+            .rg32Sint,
+            .rg32Float,
+            .rgba16Unorm,
+            .rgba16Snorm,
+            .rgba16Uint,
+            .rgba16Sint,
+            .rgba16Float,
+            .rgba32Uint,
+            .rgba32Sint,
+            .rgba32Float,
+        ]
+        
+        #if os(macOS)
+        formats += [
+            .bc1_rgba,
+            .bc1_rgba_srgb,
+            .bc2_rgba,
+            .bc2_rgba_srgb,
+            .bc3_rgba,
+            .bc3_rgba_srgb,
+            .bc4_rUnorm,
+            .bc4_rSnorm,
+            .bc5_rgUnorm,
+            .bc5_rgSnorm,
+            .bc6H_rgbFloat,
+            .bc6H_rgbuFloat,
+            .bc7_rgbaUnorm,
+            .bc7_rgbaUnorm_srgb
+        ]
+        #endif
+        
+        if #available(macOS 11.0, macCatalyst 14.0, *) {
+            formats += [
+                .r8Unorm_srgb,
+                .rg8Unorm_srgb,
+                .b5g6r5Unorm,
+                .a1bgr5Unorm,
+                .abgr4Unorm,
+                .bgr5A1Unorm,
+                .bgr10_xr,
+                .bgr10_xr_srgb,
+                .bgra10_xr,
+                .bgra10_xr_srgb,
+                .pvrtc_rgb_2bpp,
+                .pvrtc_rgb_2bpp_srgb,
+                .pvrtc_rgb_4bpp,
+                .pvrtc_rgb_4bpp_srgb,
+                .pvrtc_rgba_2bpp,
+                .pvrtc_rgba_2bpp_srgb,
+                .pvrtc_rgba_4bpp,
+                .pvrtc_rgba_4bpp_srgb,
+                .eac_r11Unorm,
+                .eac_r11Snorm,
+                .eac_rg11Unorm,
+                .eac_rg11Snorm,
+                .eac_rgba8,
+                .eac_rgba8_srgb,
+                .etc2_rgb8,
+                .etc2_rgb8_srgb,
+                .etc2_rgb8a1,
+                .etc2_rgb8a1_srgb,
+                .astc_4x4_srgb,
+                .astc_5x4_srgb,
+                .astc_5x5_srgb,
+                .astc_6x5_srgb,
+                .astc_6x6_srgb,
+                .astc_8x5_srgb,
+                .astc_8x6_srgb,
+                .astc_8x8_srgb,
+                .astc_10x5_srgb,
+                .astc_10x6_srgb,
+                .astc_10x8_srgb,
+                .astc_10x10_srgb,
+                .astc_12x10_srgb,
+                .astc_12x12_srgb,
+                .astc_4x4_ldr,
+                .astc_5x4_ldr,
+                .astc_5x5_ldr,
+                .astc_6x5_ldr,
+                .astc_6x6_ldr,
+                .astc_8x5_ldr,
+                .astc_8x6_ldr,
+                .astc_8x8_ldr,
+                .astc_10x5_ldr,
+                .astc_10x6_ldr,
+                .astc_10x8_ldr,
+                .astc_10x10_ldr,
+                .astc_12x10_ldr,
+                .astc_12x12_ldr
+            ]
+        }
+        
+        if #available(macOS 11.0, iOS 13.0, macCatalyst 14.0, *) {
+            formats += [
+                .astc_4x4_hdr,
+                .astc_5x4_hdr,
+                .astc_5x5_hdr,
+                .astc_6x5_hdr,
+                .astc_6x6_hdr,
+                .astc_8x5_hdr,
+                .astc_8x6_hdr,
+                .astc_8x8_hdr,
+                .astc_10x5_hdr,
+                .astc_10x6_hdr,
+                .astc_10x8_hdr,
+                .astc_10x10_hdr,
+                .astc_12x10_hdr,
+                .astc_12x12_hdr
+            ]
+        }
+        
+        return formats
+    }
 
 }
