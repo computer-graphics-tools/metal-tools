@@ -40,7 +40,7 @@ public extension MTLDevice {
                 bitsPerComponent: 8,
                 bytesPerRow: cgImage.width,
                 space: CGColorSpaceCreateDeviceGray(),
-                bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue
+                bitmapInfo: CGImageByteOrderInfo.orderDefault.rawValue
             )
         } else if colorSpace.model == .rgb {
             pixelFormat = srgb ? .rgba8Unorm_srgb : .rgba8Unorm
