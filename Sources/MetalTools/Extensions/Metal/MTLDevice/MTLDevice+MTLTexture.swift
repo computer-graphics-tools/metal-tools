@@ -50,7 +50,7 @@ public extension MTLDevice {
                 height: cgImage.height,
                 bitsPerComponent: 8,
                 bytesPerRow: cgImage.width * 4,
-                space: srgb ? CGColorSpace(name: CGColorSpace.sRGB)! : CGColorSpaceCreateDeviceRGB(),
+                space: srgb ? CGColorSpace(name: CGColorSpace.sRGB)! : CGColorSpace(name: CGColorSpace.genericRGBLinear)!,
                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
             )
         } else { throw MetalError.MTLDeviceError.textureCreationFailed }
