@@ -8,7 +8,11 @@ public extension MTLCommandBuffer {
         guard let encoder = self.makeComputeCommandEncoder(dispatchType: dispatch)
         else { return }
 
-        try commands(encoder)
+        do { try commands(encoder) }
+        catch {
+            encoder.endEncoding()
+            throw error
+        }
         
         encoder.endEncoding()
     }
@@ -17,7 +21,11 @@ public extension MTLCommandBuffer {
         guard let encoder = self.makeComputeCommandEncoder()
         else { return }
 
-        try commands(encoder)
+        do { try commands(encoder) }
+        catch {
+            encoder.endEncoding()
+            throw error
+        }
         
         encoder.endEncoding()
     }
@@ -26,7 +34,11 @@ public extension MTLCommandBuffer {
         guard let encoder = self.makeBlitCommandEncoder()
         else { return }
 
-        try commands(encoder)
+        do { try commands(encoder) }
+        catch {
+            encoder.endEncoding()
+            throw error
+        }
         
         encoder.endEncoding()
     }
@@ -35,9 +47,13 @@ public extension MTLCommandBuffer {
                 _ commands: (MTLRenderCommandEncoder) throws -> Void) rethrows {
         guard let encoder = self.makeRenderCommandEncoder(descriptor: descriptor)
         else { return }
-
-        try commands(encoder)
         
+        do { try commands(encoder) }
+        catch {
+            encoder.endEncoding()
+            throw error
+        }
+
         encoder.endEncoding()
     }
 }
