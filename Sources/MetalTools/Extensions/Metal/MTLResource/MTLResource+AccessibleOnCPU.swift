@@ -20,7 +20,7 @@ public extension MTLResource {
     
     func synchronizeIfNeeded(in commandBuffer: MTLCommandBuffer) {
         #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
-        if self.isSynchronizable, commandBuffer.device == self.device {
+        if self.isSynchronizable {
             commandBuffer.blit { $0.synchronize(resource: self) }
         }
         #endif
