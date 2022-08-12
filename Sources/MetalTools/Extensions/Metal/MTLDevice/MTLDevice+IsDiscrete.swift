@@ -2,7 +2,7 @@ import Metal
 
 public extension MTLDevice {
     var isDiscrete: Bool {
-        #if !arch(arm64) && targetEnvironment(macCatalyst)
+        #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
         return !self.isLowPower
         #else
         return false
