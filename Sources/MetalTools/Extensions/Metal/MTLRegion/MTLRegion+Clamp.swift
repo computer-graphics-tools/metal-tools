@@ -17,9 +17,9 @@ public extension MTLRegion {
         return .init(origin: .init(x: ox,
                                    y: oy,
                                    z: oz),
-                     size: .init(width:  maxX - ox,
-                                 height: maxY - oy,
-                                 depth:  maxZ - oz))
+                     size: .init(width:  maxX - ox + 1,
+                                 height: maxY - oy + 1,
+                                 depth:  maxZ - oz + 1))
         
     }
 
