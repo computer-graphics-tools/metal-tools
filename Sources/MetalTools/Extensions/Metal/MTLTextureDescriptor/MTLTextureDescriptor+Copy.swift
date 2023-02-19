@@ -23,6 +23,10 @@ public extension MTLTextureDescriptor {
             copy.swizzle = self.swizzle
         }
 
+        if #available(iOS 15.0, macOS 12.5, *) {
+            copy.compressionType = self.compressionType
+        }
+
         return copy
     }
 
