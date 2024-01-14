@@ -91,3 +91,4 @@ iOSInjectionProject/
 .swiftpm
 *.DS_Store
 Package.resolved
+*.swiftformat
