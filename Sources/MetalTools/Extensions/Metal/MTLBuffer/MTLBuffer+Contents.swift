@@ -58,13 +58,20 @@ public extension MTLBuffer {
     ///   - offset: offset in bytes.
     func put<T>(_ values: [T],
                 at offset: Int = 0) throws {
-        var values = values
         let dataLength = MemoryLayout<T>.stride * values.count
-        guard self.length - offset >= dataLength
+        guard length - offset >= dataLength
         else { throw MetalError.MTLBufferError.incompatibleData }
 
-        memcpy(self.contents() + offset,
-               &values,
-               dataLength)
+        _ = try values.withUnsafeBytes {
+            if let p = $0.baseAddress {
+                memcpy(
+                    contents() + offset,
+                    p,
+                    dataLength
+                )
+            } else {
+                throw MetalError.MTLBufferError.incompatibleData
+            }
+        }
     }
 }
