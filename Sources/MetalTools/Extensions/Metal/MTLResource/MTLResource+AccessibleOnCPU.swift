@@ -30,7 +30,7 @@ public extension Array where Element == MTLResource {
     func synchronizeIfNeeded(in commandBuffer: MTLCommandBuffer) {
         #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
         let synchronizableResources = filter(\.isSynchronizable)
-        guard synchronizableResources.isNotEmpty else { return }
+        guard !synchronizableResources.isEmpty else { return }
         commandBuffer.blit { encoder in
             synchronizableResources.forEach {
                 encoder.synchronize(resource: $0)

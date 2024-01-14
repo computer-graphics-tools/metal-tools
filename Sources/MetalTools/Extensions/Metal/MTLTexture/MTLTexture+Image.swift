@@ -5,7 +5,7 @@ import MetalKit
 import MetalPerformanceShaders
 
 public extension MTLTexture {
-    #if os(iOS) || targetEnvironment(macCatalyst)
+    #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
     typealias NSUIImage = UIImage
     #elseif os(macOS) && !targetEnvironment(macCatalyst)
     typealias NSUIImage = NSImage

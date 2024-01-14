@@ -14,7 +14,7 @@ public class MTLTextureCodableContainer: Codable {
         try data.withUnsafeMutableBytes { p in
             let pointer = p.baseAddress!
 
-            guard let pixelFormatSize = texture.pixelFormat.size
+            guard let pixelFormatSize = texture.pixelFormat.bytesPerPixel
             else { throw MetalError.MTLTextureSerializationError.unsupportedPixelFormat }
 
             var offset = 0
@@ -67,7 +67,7 @@ public class MTLTextureCodableContainer: Codable {
             guard let pointer = p.baseAddress
             else { throw Error.missingBaseAddress }
 
-            guard let pixelFormatSize = texture.pixelFormat.size
+            guard let pixelFormatSize = texture.pixelFormat.bytesPerPixel
             else { throw MetalError.MTLTextureSerializationError.unsupportedPixelFormat }
 
             var offset = 0
