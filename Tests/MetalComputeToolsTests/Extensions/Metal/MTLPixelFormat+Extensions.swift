@@ -1,7 +1,6 @@
 import MetalTools
 
 extension MTLPixelFormat {
-
     enum PrecisionFormat {
         case halfPrecision
         case singlePrecision
@@ -57,5 +56,4 @@ extension MTLPixelFormat {
             return nil
         }
     }
-
 }

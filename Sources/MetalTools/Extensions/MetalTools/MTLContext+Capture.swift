@@ -1,18 +1,16 @@
 import Metal
 
-@available(iOS 13.0, macOS 10.15, *)
 public extension MTLContext {
-    
     enum CaptureObject {
         case device
         case commandQueue
     }
-    
+
     enum CaptureDestination {
         case gpuTraceDocument(url: URL)
         case developerTools
     }
-    
+
     func startCapture(
         object: CaptureObject = .commandQueue,
         destination: CaptureDestination = .developerTools
@@ -31,12 +29,11 @@ public extension MTLContext {
         case .developerTools:
             captureDescriptor.destination = .developerTools
         }
-        
+
         try MTLCaptureManager.shared().startCapture(with: captureDescriptor)
     }
-    
+
     func stopCapture() {
         MTLCaptureManager.shared().stopCapture()
     }
-    
 }

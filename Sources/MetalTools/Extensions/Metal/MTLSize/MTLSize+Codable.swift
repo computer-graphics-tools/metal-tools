@@ -1,7 +1,6 @@
 import Metal
 
 extension MTLSize: Codable {
-    
     private enum CodingKey: String, Swift.CodingKey {
         case width, height, depth
     }
@@ -21,5 +20,4 @@ extension MTLSize: Codable {
         try container.encode(self.height, forKey: .height)
         try container.encode(self.depth, forKey: .depth)
     }
-    
 }

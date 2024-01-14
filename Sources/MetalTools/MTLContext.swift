@@ -2,7 +2,6 @@ import Metal
 import MetalKit
 
 public final class MTLContext {
-
     // MARK: - Properties
 
     public let device: MTLDevice
@@ -16,9 +15,11 @@ public final class MTLContext {
         self.commandQueue = commandQueue
     }
 
-    public convenience init(device: MTLDevice = Metal.device,
-                            bundle: Bundle = .main,
-                            libraryName: String? = nil) throws {
+    public convenience init(
+        device: MTLDevice = Metal.device,
+        bundle: Bundle = .main,
+        libraryName: String? = nil
+    ) throws {
         guard let commandQueue = device.makeCommandQueue()
         else { throw MetalError.MTLDeviceError.commandQueueCreationFailed }
 
@@ -31,7 +32,8 @@ public final class MTLContext {
                 library = device.makeDefaultLibrary()
             }
         } else if let name = libraryName,
-                  let path = bundle.path(forResource: name, ofType: "metallib") {
+                  let path = bundle.path(forResource: name, ofType: "metallib")
+        {
             library = try device.makeLibrary(filepath: path)
         }
 
@@ -40,7 +42,7 @@ public final class MTLContext {
     }
 
     public func library(for class: AnyClass) throws -> MTLLibrary {
-        return try self.library(for: Bundle(for: `class`))
+        try self.library(for: Bundle(for: `class`))
     }
 
     public func library(for bundle: Bundle) throws -> MTLLibrary {
@@ -53,6 +55,5 @@ public final class MTLContext {
     public func purgeLibraryCache() {
         self.libraryCache = [:]
     }
-
 }
 

@@ -1,13 +1,12 @@
 #if targetEnvironment(simulator)
 
-import XCTest
 import MetalComputeTools
+import XCTest
 
 @available(iOS 14.0, tvOS 14.0, *)
 @available(macOS, unavailable)
 @available(macCatalyst, unavailable)
 final class BitonicSortTests: XCTestCase {
-
     enum Error: Swift.Error {
         case missingData
         case unsupportedType
@@ -25,8 +24,10 @@ final class BitonicSortTests: XCTestCase {
     }
 
     func testSortFloat32() throws {
-        let data = [Float32](random: 0 ..< .init(self.numberOfElements),
-                             count: self.numberOfElements)
+        let data = [Float32](
+            random: 0 ..< .init(self.numberOfElements),
+            count: self.numberOfElements
+        )
         let cpuSortedData = data.sorted()
         let gpuSortedData = try self.sortData(data)
         XCTAssertEqual(cpuSortedData, gpuSortedData)
@@ -36,40 +37,50 @@ final class BitonicSortTests: XCTestCase {
     @available(macOS, unavailable)
     @available(macCatalyst, unavailable)
     func testSortFloat16() throws {
-        let data = [Float16](random: 0 ..< .max,
-                             count: .init(Float16.max))
+        let data = [Float16](
+            random: 0 ..< .max,
+            count: .init(Float16.max)
+        )
         let cpuSortedData = data.sorted()
         let gpuSortedData = try self.sortData(data)
         XCTAssertEqual(cpuSortedData, gpuSortedData)
     }
 
     func testSortUInt32() throws {
-        let data = [UInt32](random: 0 ..< .init(self.numberOfElements),
-                            count: self.numberOfElements)
+        let data = [UInt32](
+            random: 0 ..< .init(self.numberOfElements),
+            count: self.numberOfElements
+        )
         let cpuSortedData = data.sorted()
         let gpuSortedData = try self.sortData(data)
         XCTAssertEqual(cpuSortedData, gpuSortedData)
     }
 
     func testSortUInt16() throws {
-        let data = [UInt16](random: 0 ..< .max,
-                            count: .init(UInt16.max))
+        let data = [UInt16](
+            random: 0 ..< .max,
+            count: .init(UInt16.max)
+        )
         let cpuSortedData = data.sorted()
         let gpuSortedData = try self.sortData(data)
         XCTAssertEqual(cpuSortedData, gpuSortedData)
     }
 
     func testSortInt32() throws {
-        let data = [Int32](random: 0 ..< .init(self.numberOfElements),
-                           count: self.numberOfElements)
+        let data = [Int32](
+            random: 0 ..< .init(self.numberOfElements),
+            count: self.numberOfElements
+        )
         let cpuSortedData = data.sorted()
         let gpuSortedData = try self.sortData(data)
         XCTAssertEqual(cpuSortedData, gpuSortedData)
     }
 
     func testSortInt16() throws {
-        let data = [Int16](random: 0 ..< .max,
-                           count: .init(Int16.max))
+        let data = [Int16](
+            random: 0 ..< .max,
+            count: .init(Int16.max)
+        )
         let cpuSortedData = data.sorted()
         let gpuSortedData = try self.sortData(data)
         XCTAssertEqual(cpuSortedData, gpuSortedData)
@@ -79,16 +90,22 @@ final class BitonicSortTests: XCTestCase {
         guard let firstElement = data.first
         else { throw Error.missingData }
 
-        let bitonicSort = try BitonicSort(context: self.context,
-                                          scalarType: firstElement.scalarType())
-        let buffer = try BitonicSort.buffer(from: data,
-                                            device: self.context.device,
-                                            options: .storageModeShared)
+        let bitonicSort = try BitonicSort(
+            context: self.context,
+            scalarType: firstElement.scalarType()
+        )
+        let buffer = try BitonicSort.buffer(
+            from: data,
+            device: self.context.device,
+            options: .storageModeShared
+        )
 
         try? self.context.scheduleAndWait { commandBuffer in
-            bitonicSort(data: buffer.0,
-                        count: buffer.1,
-                        in: commandBuffer)
+            bitonicSort(
+                data: buffer.0,
+                count: buffer.1,
+                in: commandBuffer
+            )
         }
 
         guard let result = buffer.buffer.array(of: T.self, count: data.count)
@@ -100,16 +117,22 @@ final class BitonicSortTests: XCTestCase {
         guard let firstElement = data.first
         else { throw Error.missingData }
 
-        let bitonicSort = try BitonicSort(context: self.context,
-                                          scalarType: firstElement.scalarType())
-        let buffer = try BitonicSort.buffer(from: data,
-                                            device: self.context.device,
-                                            options: .storageModeShared)
+        let bitonicSort = try BitonicSort(
+            context: self.context,
+            scalarType: firstElement.scalarType()
+        )
+        let buffer = try BitonicSort.buffer(
+            from: data,
+            device: self.context.device,
+            options: .storageModeShared
+        )
 
         try? self.context.scheduleAndWait { commandBuffer in
-            bitonicSort(data: buffer.0,
-                        count: buffer.1,
-                        in: commandBuffer)
+            bitonicSort(
+                data: buffer.0,
+                count: buffer.1,
+                in: commandBuffer
+            )
         }
 
         guard let result = buffer.buffer.array(of: T.self, count: data.count)
@@ -118,31 +141,37 @@ final class BitonicSortTests: XCTestCase {
     }
 
     func testPerformance() throws {
-        let data = [Float32](random: 0 ..< .init(self.numberOfElements),
-                             count: self.numberOfElements)
+        let data = [Float32](
+            random: 0 ..< .init(self.numberOfElements),
+            count: self.numberOfElements
+        )
 
-        let bitonicSort = try BitonicSort(context: self.context,
-                                          scalarType: .float)
-        let buffer = try BitonicSort.buffer(from: data,
-                                            device: self.context.device,
-                                            options: .storageModeShared)
+        let bitonicSort = try BitonicSort(
+            context: self.context,
+            scalarType: .float
+        )
+        let buffer = try BitonicSort.buffer(
+            from: data,
+            device: self.context.device,
+            options: .storageModeShared
+        )
 
         self.measure {
             try? self.context.scheduleAndWait { commandBuffer in
-                bitonicSort(data: buffer.0,
-                            count: buffer.1,
-                            in: commandBuffer)
+                bitonicSort(
+                    data: buffer.0,
+                    count: buffer.1,
+                    in: commandBuffer
+                )
             }
         }
     }
-
 }
 
 @available(iOS 14.0, tvOS 14.0, *)
 @available(macOS, unavailable)
 @available(macCatalyst, unavailable)
 private extension Numeric {
-
     func scalarType() throws -> MTLPixelFormat.ScalarType {
         switch self {
         case is Float32: return .float
@@ -154,7 +183,6 @@ private extension Numeric {
         default: throw BitonicSortTests.Error.unsupportedType
         }
     }
-
 }
 
 @available(iOS 14.0, tvOS 14.0, *)
@@ -166,8 +194,10 @@ private extension Float16 {
 
 private extension Array where Element == Float32 {
     init(random range: Range<Float32>, count: Int) {
-        var array = [Float32](repeating: .zero,
-                              count: count)
+        var array = [Float32](
+            repeating: .zero,
+            count: count
+        )
         for i in 0 ..< array.count {
             array[i] = .random(in: range)
         }
@@ -180,8 +210,10 @@ private extension Array where Element == Float32 {
 @available(macCatalyst, unavailable)
 private extension Array where Element == Float16 {
     init(random range: Range<Float16>, count: Int) {
-        var array = [Swift.Float16](repeating: .zero,
-                                    count: count)
+        var array = [Swift.Float16](
+            repeating: .zero,
+            count: count
+        )
         for i in 0 ..< array.count {
             array[i] = .random(in: range)
         }
@@ -191,8 +223,10 @@ private extension Array where Element == Float16 {
 
 private extension Array where Element == UInt32 {
     init(random range: Range<UInt32>, count: Int) {
-        var array = [UInt32](repeating: .zero,
-                             count: count)
+        var array = [UInt32](
+            repeating: .zero,
+            count: count
+        )
         for i in 0 ..< array.count {
             array[i] = .random(in: range)
         }
@@ -202,8 +236,10 @@ private extension Array where Element == UInt32 {
 
 private extension Array where Element == UInt16 {
     init(random range: Range<UInt16>, count: Int) {
-        var array = [UInt16](repeating: .zero,
-                             count: count)
+        var array = [UInt16](
+            repeating: .zero,
+            count: count
+        )
         for i in 0 ..< array.count {
             array[i] = .random(in: range)
         }
@@ -213,8 +249,10 @@ private extension Array where Element == UInt16 {
 
 private extension Array where Element == Int32 {
     init(random range: Range<Int32>, count: Int) {
-        var array = [Int32](repeating: .zero,
-                            count: count)
+        var array = [Int32](
+            repeating: .zero,
+            count: count
+        )
         for i in 0 ..< array.count {
             array[i] = .random(in: range)
         }
@@ -224,8 +262,10 @@ private extension Array where Element == Int32 {
 
 private extension Array where Element == Int16 {
     init(random range: Range<Int16>, count: Int) {
-        var array = [Int16](repeating: .zero,
-                            count: count)
+        var array = [Int16](
+            repeating: .zero,
+            count: count
+        )
         for i in 0 ..< array.count {
             array[i] = .random(in: range)
         }

@@ -6,9 +6,8 @@ public extension MTLDevice {
         from file: URL,
         options: MTLCompileOptions? = nil
     ) throws -> MTLLibrary {
-        let shaderSource = try String(contentsOf: file)
-        return try makeLibrary(
-            source: shaderSource,
+        try self.makeLibrary(
+            source: try String(contentsOf: file),
             options: options
         )
     }
@@ -182,7 +181,7 @@ public extension MTLDevice {
 
     func maxTextureSize(desiredSize: MTLSize) -> MTLSize {
         let maxSide: Int
-        if supportsOnly8K() {
+        if self.supportsOnly8K() {
             maxSide = 8192
         } else {
             maxSide = 16384

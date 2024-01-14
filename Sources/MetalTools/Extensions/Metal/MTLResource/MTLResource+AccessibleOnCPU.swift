@@ -1,7 +1,6 @@
 import Metal
 
 public extension MTLResource {
-
     var isAccessibleOnCPU: Bool {
         #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
         return self.storageMode == .managed || self.storageMode == .shared
@@ -9,7 +8,7 @@ public extension MTLResource {
         return self.storageMode == .shared
         #endif
     }
-    
+
     var isSynchronizable: Bool {
         #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
         return self.storageMode == .managed && self.device.isDiscrete
@@ -17,7 +16,7 @@ public extension MTLResource {
         return false
         #endif
     }
-    
+
     func synchronizeIfNeeded(in commandBuffer: MTLCommandBuffer) {
         #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
         if self.isSynchronizable {
@@ -25,5 +24,18 @@ public extension MTLResource {
         }
         #endif
     }
+}
 
+public extension Array where Element == MTLResource {
+    func synchronizeIfNeeded(in commandBuffer: MTLCommandBuffer) {
+        #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
+        let synchronizableResources = filter(\.isSynchronizable)
+        guard synchronizableResources.isNotEmpty else { return }
+        commandBuffer.blit { encoder in
+            synchronizableResources.forEach {
+                encoder.synchronize(resource: $0)
+            }
+        }
+        #endif
+    }
 }

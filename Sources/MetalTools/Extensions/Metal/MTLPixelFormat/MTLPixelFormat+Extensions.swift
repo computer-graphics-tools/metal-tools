@@ -220,26 +220,25 @@ public extension MTLPixelFormat {
 
     var isPVRTC: Bool {
         switch self {
-            case .pvrtc_rgb_2bpp, .pvrtc_rgb_2bpp_srgb, .pvrtc_rgb_4bpp, .pvrtc_rgb_4bpp_srgb,
-                 .pvrtc_rgba_2bpp, .pvrtc_rgba_2bpp_srgb, .pvrtc_rgba_4bpp, .pvrtc_rgba_4bpp_srgb:
-                return true
+        case .pvrtc_rgb_2bpp, .pvrtc_rgb_2bpp_srgb, .pvrtc_rgb_4bpp, .pvrtc_rgb_4bpp_srgb,
+             .pvrtc_rgba_2bpp, .pvrtc_rgba_2bpp_srgb, .pvrtc_rgba_4bpp, .pvrtc_rgba_4bpp_srgb:
+            return true
         default: return false
         }
     }
 
     var isASTC: Bool {
         switch self {
-            case .astc_4x4_srgb, .astc_5x4_srgb, .astc_5x5_srgb, .astc_6x5_srgb, .astc_6x6_srgb, .astc_8x5_srgb,
-                 .astc_8x6_srgb, .astc_8x8_srgb, .astc_10x5_srgb, .astc_10x6_srgb, .astc_10x8_srgb, .astc_10x10_srgb,
-                 .astc_12x10_srgb, .astc_12x12_srgb, .astc_4x4_ldr, .astc_5x4_ldr, .astc_5x5_ldr, .astc_6x5_ldr,
-                 .astc_6x6_ldr, .astc_8x5_ldr, .astc_8x6_ldr, .astc_8x8_ldr, .astc_10x5_ldr, .astc_10x6_ldr,
-                 .astc_10x8_ldr, .astc_10x10_ldr, .astc_12x10_ldr, .astc_12x12_ldr:
-                return true
+        case .astc_4x4_srgb, .astc_5x4_srgb, .astc_5x5_srgb, .astc_6x5_srgb, .astc_6x6_srgb, .astc_8x5_srgb,
+             .astc_8x6_srgb, .astc_8x8_srgb, .astc_10x5_srgb, .astc_10x6_srgb, .astc_10x8_srgb, .astc_10x10_srgb,
+             .astc_12x10_srgb, .astc_12x12_srgb, .astc_4x4_ldr, .astc_5x4_ldr, .astc_5x5_ldr, .astc_6x5_ldr,
+             .astc_6x6_ldr, .astc_8x5_ldr, .astc_8x6_ldr, .astc_8x8_ldr, .astc_10x5_ldr, .astc_10x6_ldr,
+             .astc_10x8_ldr, .astc_10x10_ldr, .astc_12x10_ldr, .astc_12x12_ldr:
+            return true
         default: return false
         }
     }
 
-    @available(iOS 13.0, *)
     var isHDRASTC: Bool {
         switch self {
         case .astc_4x4_hdr, .astc_5x4_hdr, .astc_5x5_hdr, .astc_6x5_hdr, .astc_6x6_hdr, .astc_8x5_hdr,
@@ -309,16 +308,9 @@ public extension MTLPixelFormat {
     }
 
     var isDepth: Bool {
-        if #available(iOS 13.0, *) {
-            switch self {
-            case .depth16Unorm, .depth32Float: return true
-            default: return false
-            }
-        } else {
-            switch self {
-            case .depth32Float: return true
-            default: return false
-            }
+        switch self {
+        case .depth16Unorm, .depth32Float: return true
+        default: return false
         }
     }
 
@@ -333,9 +325,9 @@ public extension MTLPixelFormat {
     var isRenderable: Bool {
         // Depth, stencil, YUV & compressed pixel formats check.
         guard !(self.isDepth   ||
-                self.isStencil ||
-                self.isYUV     ||
-                self.isCompressed)
+            self.isStencil ||
+            self.isYUV     ||
+            self.isCompressed)
         else { return false }
 
         switch self {
@@ -350,7 +342,7 @@ public extension MTLPixelFormat {
         default: return true
         }
     }
-    
+
     var allCases: [MTLPixelFormat] {
         var formats: [MTLPixelFormat] = [
             .invalid,
@@ -397,9 +389,9 @@ public extension MTLPixelFormat {
             .rgba16Float,
             .rgba32Uint,
             .rgba32Sint,
-            .rgba32Float,
+            .rgba32Float
         ]
-        
+
         #if os(macOS)
         formats += [
             .bc1_rgba,
@@ -418,7 +410,7 @@ public extension MTLPixelFormat {
             .bc7_rgbaUnorm_srgb
         ]
         #endif
-        
+
         if #available(macOS 11.0, macCatalyst 14.0, *) {
             formats += [
                 .r8Unorm_srgb,
@@ -479,7 +471,7 @@ public extension MTLPixelFormat {
                 .astc_12x12_ldr
             ]
         }
-        
+
         if #available(macOS 11.0, iOS 13.0, macCatalyst 14.0, *) {
             formats += [
                 .astc_4x4_hdr,
@@ -498,8 +490,7 @@ public extension MTLPixelFormat {
                 .astc_12x12_hdr
             ]
         }
-        
+
         return formats
     }
-
 }

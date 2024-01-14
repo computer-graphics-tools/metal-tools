@@ -1,7 +1,6 @@
 import Metal
 
 public extension MTLRenderCommandEncoder {
-    
     func set<T>(vertexValue value: T, at index: Int) {
         withUnsafePointer(to: value) {
             self.setVertexBytes(

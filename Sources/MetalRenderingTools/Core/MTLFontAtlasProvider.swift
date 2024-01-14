@@ -1,11 +1,10 @@
 #if os(iOS) || targetEnvironment(macCatalyst)
 
-import UIKit
 import MetalComputeTools
 import MetalPerformanceShaders
+import UIKit
 
 final public class MTLFontAtlasProvider {
-
     public enum Error: Swift.Error {
         case fontCreationFailed
     }
@@ -29,9 +28,10 @@ final public class MTLFontAtlasProvider {
         self.context = context
         self.quantizeDistanceField = try! .init(context: context)
 
-        let defaultAtlas = try JSONDecoder().decode(MTLFontAtlasCodableContainer.self,
-                                                    from: .init(contentsOf: Self.defaultAtlasFileURL))
-                                            .fontAtlas(device: context.device)
+        let defaultAtlas = try JSONDecoder().decode(
+            MTLFontAtlasCodableContainer.self,
+            from: .init(contentsOf: Self.defaultAtlasFileURL)
+        ).fontAtlas(device: context.device)
         self.atlasCache[Self.defaultAtlasDescriptor] = defaultAtlas
     }
 
@@ -44,36 +44,50 @@ final public class MTLFontAtlasProvider {
         return self.atlasCache[descriptor]!
     }
 
-    private func createFontAtlasData(font: UIFont,
-                                     width: Int,
-                                     height: Int) -> (data: [UInt8],
-                                                      descriptors: [GlyphDescriptor]) {
-        var data = [UInt8](repeating: .zero,
-                           count: width * height)
+    private func createFontAtlasData(
+        font: UIFont,
+        width: Int,
+        height: Int
+    ) -> (
+        data: [UInt8],
+        descriptors: [GlyphDescriptor]
+    ) {
+        var data = [UInt8](
+            repeating: .zero,
+            count: width * height
+        )
         var glyphDescriptors: [GlyphDescriptor] = []
 
-        let context = CGContext(data: &data,
-                                width: width,
-                                height: height,
-                                bitsPerComponent: 8,
-                                bytesPerRow: width,
-                                space: CGColorSpaceCreateDeviceGray(),
-                                bitmapInfo: CGBitmapInfo.alphaInfoMask.rawValue & CGImageAlphaInfo.none.rawValue)!
+        let context = CGContext(
+            data: &data,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width,
+            space: CGColorSpaceCreateDeviceGray(),
+            bitmapInfo: CGBitmapInfo.alphaInfoMask.rawValue & CGImageAlphaInfo.none.rawValue
+        )!
 
         // Turn off antialiasing so we only get fully-on or fully-off pixels.
         // This implicitly disables subpixel antialiasing and hinting.
         context.setAllowsAntialiasing(false)
 
         // Flip context coordinate space so y increases downward
-        context.translateBy(x: .zero,
-                            y: .init(height))
-        context.scaleBy(x: 1,
-                        y: -1)
+        context.translateBy(
+            x: .zero,
+            y: .init(height)
+        )
+        context.scaleBy(
+            x: 1,
+            y: -1
+        )
 
-        let rect = CGRect(x: 0,
-                          y: 0,
-                          width: width,
-                          height: height)
+        let rect = CGRect(
+            x: 0,
+            y: 0,
+            width: width,
+            height: height
+        )
 
         // Fill the context with an opaque black color
         context.setFillColor(UIColor.black.cgColor)
@@ -98,11 +112,13 @@ final public class MTLFontAtlasProvider {
         for var glyphIndex in glyphIndices {
             var boundingRect = CGRect()
 
-            CTFontGetBoundingRectsForGlyphs(ctFont,
-                                            .horizontal,
-                                            &glyphIndex,
-                                            &boundingRect,
-                                            1)
+            CTFontGetBoundingRectsForGlyphs(
+                ctFont,
+                .horizontal,
+                &glyphIndex,
+                &boundingRect,
+                1
+            )
 
             if (origin.x + boundingRect.maxX + glyphMargin) > .init(width) {
                 origin.x = 0
@@ -116,39 +132,44 @@ final public class MTLFontAtlasProvider {
 
             let glyphOriginX = origin.x - boundingRect.origin.x + (glyphMargin * 0.5)
             let glyphOriginY = origin.y + (glyphMargin * 0.5)
-            var glyphTransform = CGAffineTransform(a: 1,
-                                                   b: 0,
-                                                   c: 0,
-                                                   d: -1,
-                                                   tx: glyphOriginX,
-                                                   ty: glyphOriginY)
+            var glyphTransform = CGAffineTransform(
+                a: 1,
+                b: 0,
+                c: 0,
+                d: -1,
+                tx: glyphOriginX,
+                ty: glyphOriginY
+            )
 
             var glyphPathBoundingRect: CGRect = .zero
 
-            if let path = CTFontCreatePathForGlyph(ctFont,
-                                                   glyphIndex,
-                                                   &glyphTransform) {
-
+            if let path = CTFontCreatePathForGlyph(
+                ctFont,
+                glyphIndex,
+                &glyphTransform
+            ) {
                 context.addPath(path)
                 context.fillPath()
 
                 glyphPathBoundingRect = path.boundingBoxOfPath
             }
 
-            let texCoordLeft: Float = .init(glyphPathBoundingRect.origin.x)
-                                    / .init(width)
-            let texCoordRight: Float = .init((glyphPathBoundingRect.origin.x + glyphPathBoundingRect.size.width))
-                                     / .init(width)
-            let texCoordTop: Float = .init((glyphPathBoundingRect.origin.y))
-                                   / .init(height)
-            let texCoordBottom: Float = .init((glyphPathBoundingRect.origin.y + glyphPathBoundingRect.size.height))
-                                      / .init(height)
+            let texCoordLeft: Float = .init(glyphPathBoundingRect.origin.x) / .init(width)
+            let texCoordRight: Float = .init(glyphPathBoundingRect.origin.x + glyphPathBoundingRect.size.width) / .init(width)
+            let texCoordTop: Float = .init(glyphPathBoundingRect.origin.y) / .init(height)
+            let texCoordBottom: Float = .init(glyphPathBoundingRect.origin.y + glyphPathBoundingRect.size.height) / .init(height)
 
-            let descriptor = GlyphDescriptor(glyphIndex: .init(glyphIndex),
-                                             topLeftCoordinate: .init(x: texCoordLeft,
-                                                                      y: texCoordTop),
-                                             bottomRightCoordinate: .init(x: texCoordRight,
-                                                                          y: texCoordBottom))
+            let descriptor = GlyphDescriptor(
+                glyphIndex: .init(glyphIndex),
+                topLeftCoordinate: .init(
+                    x: texCoordLeft,
+                    y: texCoordTop
+                ),
+                bottomRightCoordinate: .init(
+                    x: texCoordRight,
+                    y: texCoordBottom
+                )
+            )
             glyphDescriptors.append(descriptor)
 
             origin.x += boundingRect.width + glyphMargin
@@ -159,17 +180,23 @@ final public class MTLFontAtlasProvider {
 
     /// Compute signed-distance field for an 8-bpp grayscale image (values greater than 127 are considered "on")
     /// For details of this algorithm, see "The 'dead reckoning' signed distance transform" [Grevera 2004]
-    private func createSignedDistanceFieldData(from fontAtlasData: [UInt8],
-                                               width: Int,
-                                               height: Int) -> [Float] {
+    private func createSignedDistanceFieldData(
+        from fontAtlasData: [UInt8],
+        width: Int,
+        height: Int
+    ) -> [Float] {
         let maxDist = hypot(Float(width), Float(height))
         // Initialization phase.
         // Distance to nearest boundary point map - set all distances to "infinity".
-        var distanceMap = [Float](repeating: maxDist,
-                                  count: width * height)
+        var distanceMap = [Float](
+            repeating: maxDist,
+            count: width * height
+        )
         // Nearest boundary point map - zero out nearest boundary point map.
-        var boundaryPointMap = [SIMD2<Int32>](repeating: .zero,
-                                              count: width * height)
+        var boundaryPointMap = [SIMD2<Int32>](
+            repeating: .zero,
+            count: width * height
+        )
         let distUnit: Float = 1
         let distDiag: Float = sqrtf(2)
         // Immediate interior/exterior phase: mark all points along the boundary as such.
@@ -179,7 +206,8 @@ final public class MTLFontAtlasProvider {
                 if (fontAtlasData[y * width + x - 1] > 0x7f) != inside    ||
                     (fontAtlasData[y * width + x + 1] > 0x7f) != inside   ||
                     (fontAtlasData[(y - 1) * width + x] > 0x7f) != inside ||
-                    (fontAtlasData[(y + 1) * width + x] > 0x7f) != inside {
+                    (fontAtlasData[(y + 1) * width + x] > 0x7f) != inside
+                {
                     distanceMap[y * width + x] = 0
                     boundaryPointMap[y * width + x].x = Int32(x)
                     boundaryPointMap[y * width + x].y = Int32(y)
@@ -247,56 +275,79 @@ final public class MTLFontAtlasProvider {
     }
 
     private func createAtlas(descriptor: MTLFontAtlasDescriptor) throws -> MTLFontAtlas {
-        guard let font = UIFont.atlasFont(name: descriptor.fontName,
-                                          atlasRect: .init(origin: .zero,
-                                                           size: .init(width: self.sourceFontAtlasSize,
-                                                                       height: self.sourceFontAtlasSize)))
+        guard let font = UIFont.atlasFont(
+            name: descriptor.fontName,
+            atlasRect: .init(
+                origin: .zero,
+                size: .init(
+                    width: self.sourceFontAtlasSize,
+                    height: self.sourceFontAtlasSize
+                )
+            )
+        )
         else { throw Error.fontCreationFailed }
 
-        let fontAtlasData = self.createFontAtlasData(font: font,
-                                                     width: self.sourceFontAtlasSize,
-                                                     height: self.sourceFontAtlasSize)
+        let fontAtlasData = self.createFontAtlasData(
+            font: font,
+            width: self.sourceFontAtlasSize,
+            height: self.sourceFontAtlasSize
+        )
 
-        var sdfFontAtlasData = self.createSignedDistanceFieldData(from: fontAtlasData.data,
-                                                                  width: self.sourceFontAtlasSize,
-                                                                  height: self.sourceFontAtlasSize)
+        var sdfFontAtlasData = self.createSignedDistanceFieldData(
+            from: fontAtlasData.data,
+            width: self.sourceFontAtlasSize,
+            height: self.sourceFontAtlasSize
+        )
 
         let sdfFontAtlasTexture = try self.context
-                                          .texture(width: self.sourceFontAtlasSize,
-                                                   height: self.sourceFontAtlasSize,
-                                                   pixelFormat: .r32Float,
-                                                   usage: [.shaderRead, .shaderWrite])
+            .texture(
+                width: self.sourceFontAtlasSize,
+                height: self.sourceFontAtlasSize,
+                pixelFormat: .r32Float,
+                usage: [.shaderRead, .shaderWrite]
+            )
         let fontAtlasTexture = try self.context
-                                       .texture(width: descriptor.textureSize,
-                                                height: descriptor.textureSize,
-                                                pixelFormat: .r8Unorm,
-                                                usage: [.shaderRead, .shaderWrite])
+            .texture(
+                width: descriptor.textureSize,
+                height: descriptor.textureSize,
+                pixelFormat: .r8Unorm,
+                usage: [.shaderRead, .shaderWrite]
+            )
 
-        let fontAtlas = MTLFontAtlas(font: font,
-                                     glyphDescriptors: fontAtlasData.descriptors,
-                                     fontAtlasTexture: fontAtlasTexture)
+        let fontAtlas = MTLFontAtlas(
+            font: font,
+            glyphDescriptors: fontAtlasData.descriptors,
+            fontAtlasTexture: fontAtlasTexture
+        )
 
-        sdfFontAtlasTexture.replace(region: sdfFontAtlasTexture.region,
-                                    mipmapLevel: 0,
-                                    withBytes: &sdfFontAtlasData,
-                                    bytesPerRow: sdfFontAtlasTexture.width * MemoryLayout<Float>.stride)
+        sdfFontAtlasTexture.replace(
+            region: sdfFontAtlasTexture.region,
+            mipmapLevel: 0,
+            withBytes: &sdfFontAtlasData,
+            bytesPerRow: sdfFontAtlasTexture.width * MemoryLayout<Float>.stride
+        )
 
         let fontSpread = Float(fontAtlas.font.estimatedLineWidth * 0.5)
         try self.context.scheduleAndWait { commandBuffer in
-            self.quantizeDistanceField(source: sdfFontAtlasTexture,
-                                       destination: fontAtlas.fontAtlasTexture,
-                                       normalizationFactor: fontSpread,
-                                       in: commandBuffer)
+            self.quantizeDistanceField(
+                source: sdfFontAtlasTexture,
+                destination: fontAtlas.fontAtlasTexture,
+                normalizationFactor: fontSpread,
+                in: commandBuffer
+            )
         }
 
         return fontAtlas
     }
 
-    private static let defaultAtlasFileURL = Bundle.module.url(forResource: "HelveticaNeue",
-                                                               withExtension: "mtlfontatlas")!
-    public static let defaultAtlasDescriptor = MTLFontAtlasDescriptor(fontName: "HelveticaNeue",
-                                                                      textureSize: 2048)
-
+    private static let defaultAtlasFileURL = Bundle.module.url(
+        forResource: "HelveticaNeue",
+        withExtension: "mtlfontatlas"
+    )!
+    public static let defaultAtlasDescriptor = MTLFontAtlasDescriptor(
+        fontName: "HelveticaNeue",
+        textureSize: 2048
+    )
 }
 
 #endif

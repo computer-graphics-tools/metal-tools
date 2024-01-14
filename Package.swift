@@ -1,12 +1,13 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.6
 
 import PackageDescription
 
 let package = Package(
     name: "metal-tools",
     platforms: [
-        .iOS(.v11),
-        .macOS(.v10_13)
+        .iOS(.v13),
+        .macOS(.v10_15),
+        .macCatalyst(.v13)
     ],
     products: [
         .library(
@@ -20,7 +21,7 @@ let package = Package(
         .library(
             name: "MetalRenderingTools",
             targets: ["MetalRenderingTools"]
-        ),
+        )
     ],
     dependencies: [
         .package(
@@ -70,15 +71,19 @@ let package = Package(
                 .process("Kernels/YCbCrToRGBA/YCbCrToRGBA.metal")
             ]
         ),
-        .target(name: "MetalComputeToolsTestsResources",
-                path: "Tests/MetalComputeToolsTestsResources",
-                resources: [.copy("Shared")]),
-        .testTarget(name: "MetalComputeToolsTests",
-                    dependencies: [
-                        .target(name: "MetalComputeTools"),
-                        .target(name: "MetalComputeToolsTestsResources")
-                    ],
-                    resources: [.process("Shaders/Shaders.metal")]),
+        .target(
+            name: "MetalComputeToolsTestsResources",
+            path: "Tests/MetalComputeToolsTestsResources",
+            resources: [.copy("Shared")]
+        ),
+        .testTarget(
+            name: "MetalComputeToolsTests",
+            dependencies: [
+                .target(name: "MetalComputeTools"),
+                .target(name: "MetalComputeToolsTestsResources")
+            ],
+            resources: [.process("Shaders/Shaders.metal")]
+        ),
         .target(
             name: "MetalRenderingToolsSharedTypes",
             publicHeadersPath: "."
@@ -87,7 +92,7 @@ let package = Package(
             name: "MetalRenderingTools",
             dependencies: [
                 .target(name: "MetalRenderingToolsSharedTypes"),
-                .target(name: "MetalComputeTools"),
+                .target(name: "MetalComputeTools")
             ],
             resources: [
                 .process("Renderers/Common/Common.metal"),

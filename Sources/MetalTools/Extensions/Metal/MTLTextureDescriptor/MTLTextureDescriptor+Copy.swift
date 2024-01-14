@@ -1,8 +1,7 @@
-import Metal
 import Foundation
+import Metal
 
 public extension MTLTextureDescriptor {
-
     func deepCopy() -> MTLTextureDescriptor {
         let copy = MTLTextureDescriptor()
         copy.pixelFormat = self.pixelFormat
@@ -29,5 +28,4 @@ public extension MTLTextureDescriptor {
 
         return copy
     }
-
 }

@@ -1,11 +1,10 @@
 #if targetEnvironment(simulator)
 
-import XCTest
 import MetalComputeTools
 import MetalComputeToolsTestsResources
+import XCTest
 
 final class TextureCachingTests: XCTestCase {
-
     // MARK: - Type Definitions
 
     enum Error: Swift.Error {
@@ -23,12 +22,18 @@ final class TextureCachingTests: XCTestCase {
 
     override func setUpWithError() throws {
         self.context = try .init(bundle: .module)
-        self.euclideanDistanceFloat = try .init(context: self.context,
-                                                scalarType: .float)
-        self.euclideanDistanceUInt = try .init(context: self.context,
-                                               scalarType: .uint)
-        self.denormalize = try .init(context: self.context,
-                                     conversionType: .denormalize)
+        self.euclideanDistanceFloat = try .init(
+            context: self.context,
+            scalarType: .float
+        )
+        self.euclideanDistanceUInt = try .init(
+            context: self.context,
+            scalarType: .uint
+        )
+        self.denormalize = try .init(
+            context: self.context,
+            conversionType: .denormalize
+        )
     }
 
     // MARK: - Testing
@@ -65,48 +70,56 @@ final class TextureCachingTests: XCTestCase {
         let jsonEncoder = JSONEncoder()
         let jsonDecoder = JSONDecoder()
 
-        let resultBuffer = try self.context.buffer(for: Float.self,
-                                                   options: .storageModeShared)
+        let resultBuffer = try self.context.buffer(
+            for: Float.self,
+            options: .storageModeShared
+        )
 
         let originalTextures: [MTLTexture] = try ["255x121", "512x512", "1024x1024"].map {
-            let originalTextureURL = Bundle.metalComputeToolsTestsResources.url(forResource: "Shared/\($0)",
-                                                                                withExtension: "png")!
+            let originalTextureURL = Bundle.metalComputeToolsTestsResources.url(
+                forResource: "Shared/\($0)",
+                withExtension: "png"
+            )!
             return try self.context.scheduleAndWait { commadBuffer in
                 let cgImage = try CGImage.initFromURL(originalTextureURL)
-                return try self.textureFromCGImage(cgImage,
-                                                   pixelFormat: pixelFormat,
-                                                   generateMipmaps: false,
-                                                   in: commadBuffer)
+                return try self.textureFromCGImage(
+                    cgImage,
+                    pixelFormat: pixelFormat,
+                    generateMipmaps: false,
+                    in: commadBuffer
+                )
             }
         }
-        
+
         var results: [Float] = []
 
         try originalTextures.forEach { original in
             let originalTextureCodableBox = try original.codable()
             let encodedData = try jsonEncoder.encode(originalTextureCodableBox)
 
-            let decodedTextureCodableBox = try jsonDecoder.decode(MTLTextureCodableContainer.self,
-                                                                  from: encodedData)
+            let decodedTextureCodableBox = try jsonDecoder.decode(
+                MTLTextureCodableContainer.self,
+                from: encodedData
+            )
             let decoded = try decodedTextureCodableBox.texture(device: self.context.device)
 
             try self.context.scheduleAndWait { commadBuffer in
                 if original.mipmapLevelCount > 1 {
-
                     var level: Int = 0
                     var width = original.width
                     var height = original.height
 
-                    while (width + height > 32) {
-
+                    while width + height > 32 {
                         guard let originalTextureView = original.view(level: level),
                               let decodedTextureView = decoded.view(level: level)
                         else { fatalError("Couldn't create texture view at level \(level)") }
 
-                        euclideanDistance(textureOne: originalTextureView,
-                                          textureTwo: decodedTextureView,
-                                          resultBuffer: resultBuffer,
-                                          in: commadBuffer)
+                        euclideanDistance(
+                            textureOne: originalTextureView,
+                            textureTwo: decodedTextureView,
+                            resultBuffer: resultBuffer,
+                            in: commadBuffer
+                        )
 
                         width = originalTextureView.width
                         height = originalTextureView.height
@@ -114,37 +127,45 @@ final class TextureCachingTests: XCTestCase {
                     }
 
                 } else {
-                    euclideanDistance(textureOne: original,
-                                      textureTwo: decoded,
-                                      resultBuffer: resultBuffer,
-                                      in: commadBuffer)
+                    euclideanDistance(
+                        textureOne: original,
+                        textureTwo: decoded,
+                        resultBuffer: resultBuffer,
+                        in: commadBuffer
+                    )
                 }
             }
-            
+
             let distance = resultBuffer.pointer(of: Float.self)!.pointee
-            
+
             results.append(distance)
         }
 
         return results
     }
 
-    private func textureFromCGImage(_ cgImage: CGImage,
-                                    pixelFormat: MTLPixelFormat,
-                                    generateMipmaps: Bool,
-                                    in commandBuffer: MTLCommandBuffer) throws -> MTLTexture {
+    private func textureFromCGImage(
+        _ cgImage: CGImage,
+        pixelFormat: MTLPixelFormat,
+        generateMipmaps: Bool,
+        in commandBuffer: MTLCommandBuffer
+    ) throws -> MTLTexture {
         var generateMipmaps = generateMipmaps
         let result: MTLTexture
 
         switch pixelFormat.dataFormat {
         case .normalized:
-            result = try self.context.texture(from: cgImage,
-                                              usage: [.shaderRead, .shaderWrite])
+            result = try self.context.texture(
+                from: cgImage,
+                usage: [.shaderRead, .shaderWrite]
+            )
         case .unsignedInteger:
             generateMipmaps = false
 
-            let normalized = try self.context.texture(from: cgImage,
-                                                      usage: [.shaderRead, .shaderWrite])
+            let normalized = try self.context.texture(
+                from: cgImage,
+                usage: [.shaderRead, .shaderWrite]
+            )
 
             let unnormalizedTextureDescriptor = MTLTextureDescriptor()
             unnormalizedTextureDescriptor.width = cgImage.width
@@ -155,9 +176,11 @@ final class TextureCachingTests: XCTestCase {
 
             let unnormalized = try self.context.texture(descriptor: unnormalizedTextureDescriptor)
 
-            self.denormalize(normalized: normalized,
-                             unnormalized: unnormalized,
-                             in: commandBuffer)
+            self.denormalize(
+                normalized: normalized,
+                unnormalized: unnormalized,
+                in: commandBuffer
+            )
 
             result = unnormalized
         default: throw Error.unsutablePixelFormat
@@ -171,7 +194,6 @@ final class TextureCachingTests: XCTestCase {
 
         return result
     }
-
 }
 
 #endif

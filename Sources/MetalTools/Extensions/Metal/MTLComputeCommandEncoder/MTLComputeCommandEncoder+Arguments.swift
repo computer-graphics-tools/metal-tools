@@ -6,7 +6,7 @@ public extension MTLComputeCommandEncoder {
         at index: Int
     ) {
         withUnsafePointer(to: value) {
-            setBytes(
+            self.setBytes(
                 $0,
                 length: MemoryLayout<T>.stride,
                 index: index
@@ -20,7 +20,7 @@ public extension MTLComputeCommandEncoder {
     ) {
         value.withUnsafeBufferPointer {
             if let p = $0.baseAddress {
-                setBytes(
+                self.setBytes(
                     p,
                     length: MemoryLayout<T>.stride * value.count,
                     index: index
@@ -33,7 +33,7 @@ public extension MTLComputeCommandEncoder {
         _ textures: [MTLTexture?],
         startingAt startIndex: Int = 0
     ) {
-        setTextures(
+        self.setTextures(
             textures,
             range: startIndex ..< (startIndex + textures.count)
         )
@@ -44,7 +44,7 @@ public extension MTLComputeCommandEncoder {
         offsets: [Int]? = nil,
         startingAt startIndex: Int = 0
     ) {
-        setBuffers(
+        self.setBuffers(
             buffers,
             offsets: offsets ?? buffers.map { _ in 0 },
             range: startIndex ..< (startIndex + buffers.count)
@@ -55,7 +55,7 @@ public extension MTLComputeCommandEncoder {
         _ textures: MTLTexture?...,
         startingAt startIndex: Int = 0
     ) {
-        setTextures(
+        self.setTextures(
             textures,
             range: startIndex ..< (startIndex + textures.count)
         )
@@ -66,7 +66,7 @@ public extension MTLComputeCommandEncoder {
         offsets: [Int]? = nil,
         startingAt startIndex: Int = 0
     ) {
-        setBuffers(
+        self.setBuffers(
             buffers,
             offsets: offsets ?? buffers.map { _ in 0 },
             range: startIndex ..< (startIndex + buffers.count)

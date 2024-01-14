@@ -2,7 +2,6 @@ import MetalTools
 import simd
 
 public class MaskRenderer {
-
     // MARK: - Properties
 
     /// Mask color. Red in default.
@@ -22,10 +21,14 @@ public class MaskRenderer {
     ///   - context: Alloy's Metal context.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Library or function creation errors.
-    public convenience init(context: MTLContext,
-                            pixelFormat: MTLPixelFormat = .bgra8Unorm) throws {
-        try self.init(library: context.library(for: Self.self),
-                      pixelFormat: pixelFormat)
+    public convenience init(
+        context: MTLContext,
+        pixelFormat: MTLPixelFormat = .bgra8Unorm
+    ) throws {
+        try self.init(
+            library: context.library(for: Self.self),
+            pixelFormat: pixelFormat
+        )
     }
 
     /// Creates a new instance of MaskRenderer.
@@ -34,8 +37,10 @@ public class MaskRenderer {
     ///   - library: Alloy's shader library.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Function creation error.
-    public init(library: MTLLibrary,
-                pixelFormat: MTLPixelFormat = .bgra8Unorm) throws {
+    public init(
+        library: MTLLibrary,
+        pixelFormat: MTLPixelFormat = .bgra8Unorm
+    ) throws {
         guard let vertexFunction = library.makeFunction(name: Self.vertexFunctionName),
               let fragmentFunction = library.makeFunction(name: Self.fragmentFunctionName)
         else { throw MetalError.MTLLibraryError.functionCreationFailed }
@@ -46,25 +51,34 @@ public class MaskRenderer {
         renderPipelineDescriptor.colorAttachments[0].pixelFormat = pixelFormat
         renderPipelineDescriptor.colorAttachments[0].setup(blending: .alpha)
 
-        self.renderPipelineState = try library.device
-                                              .makeRenderPipelineState(descriptor: renderPipelineDescriptor)
+        self.renderPipelineState = try library.device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
     }
 
     // MARK: - Helpers
 
     private func constructRectangle() -> Rectangle {
-        let topLeftPosition = SIMD2<Float>(Float(self.normalizedRect.minX),
-                                           Float(self.normalizedRect.maxY))
-        let bottomLeftPosition = SIMD2<Float>(Float(self.normalizedRect.minX),
-                                              Float(self.normalizedRect.minY))
-        let topRightPosition = SIMD2<Float>(Float(self.normalizedRect.maxX),
-                                            Float(self.normalizedRect.maxY))
-        let bottomRightPosition = SIMD2<Float>(Float(self.normalizedRect.maxX),
-                                               Float(self.normalizedRect.minY))
-        return Rectangle(topLeft: topLeftPosition,
-                         bottomLeft: bottomLeftPosition,
-                         topRight: topRightPosition,
-                         bottomRight: bottomRightPosition)
+        let topLeftPosition = SIMD2<Float>(
+            Float(self.normalizedRect.minX),
+            Float(self.normalizedRect.maxY)
+        )
+        let bottomLeftPosition = SIMD2<Float>(
+            Float(self.normalizedRect.minX),
+            Float(self.normalizedRect.minY)
+        )
+        let topRightPosition = SIMD2<Float>(
+            Float(self.normalizedRect.maxX),
+            Float(self.normalizedRect.maxY)
+        )
+        let bottomRightPosition = SIMD2<Float>(
+            Float(self.normalizedRect.maxX),
+            Float(self.normalizedRect.minY)
+        )
+        return Rectangle(
+            topLeft: topLeftPosition,
+            bottomLeft: bottomLeftPosition,
+            topRight: topRightPosition,
+            bottomRight: bottomRightPosition
+        )
     }
 
     // MARK: - Rendering
@@ -74,10 +88,14 @@ public class MaskRenderer {
     /// - Parameters:
     ///   - renderPassDescriptor: Render pass descriptor to be used.
     ///   - commandBuffer: Command buffer to put the rendering work items into.
-    public func render(renderPassDescriptor: MTLRenderPassDescriptor,
-                       commandBuffer: MTLCommandBuffer) throws {
-        commandBuffer.render(descriptor: renderPassDescriptor,
-                             self.render(using:))
+    public func render(
+        renderPassDescriptor: MTLRenderPassDescriptor,
+        commandBuffer: MTLCommandBuffer
+    ) throws {
+        commandBuffer.render(
+            descriptor: renderPassDescriptor,
+            self.render(using:)
+        )
     }
 
     /// Render a rectangle with mask in a target texture.
@@ -93,16 +111,24 @@ public class MaskRenderer {
         renderEncoder.setRenderPipelineState(self.renderPipelineState)
         // Set any buffers fed into our render pipeline.
         let rectangle = self.constructRectangle()
-        renderEncoder.set(vertexValue: rectangle,
-                          at: 0)
-        renderEncoder.setFragmentTexture(self.maskTexture,
-                                         index: 0)
-        renderEncoder.set(fragmentValue: self.color,
-                          at: 0)
+        renderEncoder.set(
+            vertexValue: rectangle,
+            at: 0
+        )
+        renderEncoder.setFragmentTexture(
+            self.maskTexture,
+            index: 0
+        )
+        renderEncoder.set(
+            fragmentValue: self.color,
+            at: 0
+        )
         // Draw.
-        renderEncoder.drawPrimitives(type: .triangleStrip,
-                                     vertexStart: 0,
-                                     vertexCount: 4)
+        renderEncoder.drawPrimitives(
+            type: .triangleStrip,
+            vertexStart: 0,
+            vertexCount: 4
+        )
         renderEncoder.popDebugGroup()
     }
 

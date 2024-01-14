@@ -4,12 +4,13 @@ import Metal
 import UIKit.UIFont
 
 public final class MTLFontAtlasDescriptor: Hashable {
-
     let fontName: String
     let textureSize: Int
 
-    public init(fontName: String,
-                textureSize: Int) {
+    public init(
+        fontName: String,
+        textureSize: Int
+    ) {
         self.fontName = fontName
         self.textureSize = textureSize
     }
@@ -19,9 +20,11 @@ public final class MTLFontAtlasDescriptor: Hashable {
         hasher.combine(self.textureSize)
     }
 
-    public static func == (lhs: MTLFontAtlasDescriptor,
-                           rhs: MTLFontAtlasDescriptor) -> Bool {
-        return lhs.fontName == rhs.fontName
+    public static func == (
+        lhs: MTLFontAtlasDescriptor,
+        rhs: MTLFontAtlasDescriptor
+    ) -> Bool {
+        lhs.fontName == rhs.fontName
             && lhs.textureSize == rhs.textureSize
     }
 }

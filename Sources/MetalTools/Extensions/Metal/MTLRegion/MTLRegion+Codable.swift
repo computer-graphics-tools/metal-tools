@@ -1,7 +1,6 @@
 import Metal
 
 extension MTLRegion: Codable {
-    
     private enum CodingKey: String, Swift.CodingKey {
         case origin, size
     }
@@ -19,5 +18,4 @@ extension MTLRegion: Codable {
         try container.encode(self.origin, forKey: .origin)
         try container.encode(self.size, forKey: .size)
     }
-    
 }

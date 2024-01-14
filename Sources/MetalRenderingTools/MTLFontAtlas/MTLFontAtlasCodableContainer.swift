@@ -17,11 +17,15 @@ final public class MTLFontAtlasCodableContainer: Codable {
     }
 
     public func fontAtlas(device: MTLDevice) throws -> MTLFontAtlas {
-        return try .init(font: .init(name: self.fontName,
-                                     size: self.fontSize)!,
-                         glyphDescriptors: self.glyphDescriptors,
-                         fontAtlasTexture: self.fontAtlasTextureCodableBox
-                                               .texture(device: device))
+        try .init(
+            font: .init(
+                name: self.fontName,
+                size: self.fontSize
+            )!,
+            glyphDescriptors: self.glyphDescriptors,
+            fontAtlasTexture: self.fontAtlasTextureCodableBox
+                .texture(device: device)
+        )
     }
 }
 
