@@ -1,10 +1,10 @@
 import Metal
 
 public extension MTLCommandBuffer {
-
-    @available(iOS 12.0, macOS 10.14, *)
-    func compute(dispatch: MTLDispatchType,
-                 _ commands: (MTLComputeCommandEncoder) throws -> Void) rethrows {
+    func compute(
+        dispatch: MTLDispatchType,
+        _ commands: (MTLComputeCommandEncoder) throws -> Void
+    ) rethrows {
         guard let encoder = self.makeComputeCommandEncoder(dispatchType: dispatch)
         else { return }
 
@@ -13,7 +13,7 @@ public extension MTLCommandBuffer {
             encoder.endEncoding()
             throw error
         }
-        
+
         encoder.endEncoding()
     }
 
@@ -26,7 +26,7 @@ public extension MTLCommandBuffer {
             encoder.endEncoding()
             throw error
         }
-        
+
         encoder.endEncoding()
     }
 
@@ -39,15 +39,17 @@ public extension MTLCommandBuffer {
             encoder.endEncoding()
             throw error
         }
-        
+
         encoder.endEncoding()
     }
-    
-    func render(descriptor: MTLRenderPassDescriptor,
-                _ commands: (MTLRenderCommandEncoder) throws -> Void) rethrows {
+
+    func render(
+        descriptor: MTLRenderPassDescriptor,
+        _ commands: (MTLRenderCommandEncoder) throws -> Void
+    ) rethrows {
         guard let encoder = self.makeRenderCommandEncoder(descriptor: descriptor)
         else { return }
-        
+
         do { try commands(encoder) }
         catch {
             encoder.endEncoding()

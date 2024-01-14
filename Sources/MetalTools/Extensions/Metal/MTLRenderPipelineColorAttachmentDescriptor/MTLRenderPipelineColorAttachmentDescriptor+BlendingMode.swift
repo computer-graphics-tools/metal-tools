@@ -3,7 +3,6 @@ import Metal
 public typealias BlendingMode = MTLRenderPipelineColorAttachmentDescriptor.BlendingMode
 
 public extension MTLRenderPipelineColorAttachmentDescriptor {
-
     /// Blend Mode Options
     enum BlendingMode {
         /// Disabled blending mode. Use this with fully opaque surfaces for extra performance.
@@ -84,5 +83,4 @@ public extension MTLRenderPipelineColorAttachmentDescriptor {
             self.destinationAlphaBlendFactor = .one
         }
     }
-
 }

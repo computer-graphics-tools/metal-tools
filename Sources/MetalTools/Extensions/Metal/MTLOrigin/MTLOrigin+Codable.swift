@@ -1,7 +1,6 @@
 import Metal
 
 extension MTLOrigin: Codable {
-    
     private enum CodingKey: String, Swift.CodingKey {
         case x, y, z
     }
@@ -21,5 +20,4 @@ extension MTLOrigin: Codable {
         try container.encode(self.y, forKey: .y)
         try container.encode(self.z, forKey: .z)
     }
-    
 }

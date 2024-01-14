@@ -1,7 +1,6 @@
 import Metal
 
 extension MTLTextureDescriptor: Encodable {
-
     internal enum CodingKeys: String, CodingKey {
         case width
         case height
@@ -34,7 +33,7 @@ extension MTLTextureDescriptor: Encodable {
 
         if #available(iOS 12, macOS 10.14, *) {
             self.allowGPUOptimizedContents = try container.decodeIfPresent(Bool.self, forKey: .allowGPUOptimizedContents)
-                                          ?? true
+                ?? true
         }
     }
 

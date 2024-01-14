@@ -1,17 +1,14 @@
 import Metal
 
 public extension MTLContext {
-
     // MARK: - MetalTools API
 
     func scheduleAndWait<T>(_ bufferEncodings: (MTLCommandBuffer) throws -> T) throws -> T {
-        return try self.commandQueue
-                       .scheduleAndWait(bufferEncodings)
+        try self.commandQueue.scheduleAndWait(bufferEncodings)
     }
 
     func schedule(_ bufferEncodings: (MTLCommandBuffer) throws -> Void) throws {
-        try self.commandQueue
-                .schedule(bufferEncodings)
+        try self.commandQueue.schedule(bufferEncodings)
     }
 
     // MARK: - Vanilla API
@@ -22,17 +19,14 @@ public extension MTLContext {
     }
 
     func commandBuffer() throws -> MTLCommandBuffer {
-        guard let commandBuffer = self.commandQueue
-                                      .makeCommandBuffer()
+        guard let commandBuffer = self.commandQueue.makeCommandBuffer()
         else { throw MetalError.MTLCommandQueueError.commandBufferCreationFailed }
         return commandBuffer
     }
 
     func commandBufferWithUnretainedReferences() throws -> MTLCommandBuffer {
-        guard let commandBuffer = self.commandQueue
-                                      .makeCommandBufferWithUnretainedReferences()
+        guard let commandBuffer = self.commandQueue.makeCommandBufferWithUnretainedReferences()
         else { throw MetalError.MTLCommandQueueError.commandBufferCreationFailed }
         return commandBuffer
     }
-
 }

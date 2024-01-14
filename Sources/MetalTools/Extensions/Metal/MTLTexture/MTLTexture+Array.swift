@@ -1,7 +1,6 @@
 import Metal
 
 public extension MTLTexture {
-
     /// Convenience function that copies the texture's pixel data to a Swift array.
     ///
     /// - Parameters:
@@ -14,32 +13,43 @@ public extension MTLTexture {
     ///     value.
     /// - Returns: Swift array containing texture's pixel data.
 
-    private func array<T>(width: Int,
-                          height: Int,
-                          featureChannels: Int,
-                          initial: T) throws -> [T] {
-        guard self.isAccessibleOnCPU
+    private func array<T>(
+        width: Int,
+        height: Int,
+        featureChannels: Int,
+        initial: T
+    ) throws -> [T] {
+        guard isAccessibleOnCPU
         else { throw MetalError.MTLResourceError.resourceUnavailable }
-        guard featureChannels != 3
-           && featureChannels <= 4
+        guard featureChannels != 3,
+              featureChannels <= 4
         else { throw MetalError.MTLTextureError.imageIncompatiblePixelFormat }
 
-        let count = width
-                  * height
-                  * featureChannels
-        var bytes = [T](repeating: initial,
-                        count: count)
-        let bytesPerRow = width
-                        * featureChannels
-                        * MemoryLayout<T>.stride
-        self.getBytes(&bytes,
-                      bytesPerRow: bytesPerRow,
-                      from: .init(origin: .zero,
-                                  size: .init(width: width,
-                                              height: height,
-                                              depth: 1)),
-                      mipmapLevel: 0)
+        let count = width * height * featureChannels
+
+        let bytesPerRow = width * featureChannels * MemoryLayout<T>.stride
+
+        var bytes = [T](
+            repeating: initial,
+            count: count
+        )
+
+        withUnsafeMutablePointer(to: &bytes) {
+            getBytes(
+                $0,
+                bytesPerRow: bytesPerRow,
+                from: .init(
+                    origin: .zero,
+                    size: .init(
+                        width: width,
+                        height: height,
+                        depth: 1
+                    )
+                ),
+                mipmapLevel: 0
+            )
+        }
+
         return bytes
     }
 }
-

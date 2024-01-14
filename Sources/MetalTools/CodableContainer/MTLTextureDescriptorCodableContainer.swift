@@ -1,7 +1,6 @@
 import Metal
 
 final class MTLTextureDescriptorCodableContainer: Codable {
-    
     let descriptor: MTLTextureDescriptor
 
     init(descriptor: MTLTextureDescriptor) {
@@ -15,5 +14,4 @@ final class MTLTextureDescriptorCodableContainer: Codable {
     func encode(to encoder: Encoder) throws {
         try self.descriptor.encode(to: encoder)
     }
-    
 }

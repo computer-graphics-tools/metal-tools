@@ -1,7 +1,6 @@
 import Metal
 
 public extension MTLCommandQueue {
-
     func scheduleAndWait<T>(_ bufferEncodings: (MTLCommandBuffer) throws -> T) throws -> T {
         guard let commandBuffer = self.makeCommandBuffer()
         else { throw MetalError.MTLCommandQueueError.commandBufferCreationFailed }
@@ -22,5 +21,4 @@ public extension MTLCommandQueue {
 
         commandBuffer.commit()
     }
-
 }
