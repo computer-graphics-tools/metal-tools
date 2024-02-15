@@ -1,6 +1,10 @@
 import Metal
 
 public class MTLTextureCodableContainer: Codable {
+    public enum Error: Swift.Error {
+        case missingBaseAddress
+    }
+
     private let descriptor: MTLTextureDescriptorCodableContainer
     private var data: Data
 
@@ -11,8 +15,9 @@ public class MTLTextureCodableContainer: Codable {
         let sizeAndAlign = texture.device.heapTextureSizeAndAlign(descriptor: descriptor)
 
         var data = Data(count: sizeAndAlign.size)
-        try data.withUnsafeMutableBytes { p in
-            let pointer = p.baseAddress!
+        try data.withUnsafeMutableBytes {
+            guard let pointer = $0.baseAddress
+            else { throw Error.missingBaseAddress }
 
             guard let pixelFormatSize = texture.pixelFormat.bytesPerPixel
             else { throw MetalError.MTLTextureSerializationError.unsupportedPixelFormat }
@@ -56,15 +61,11 @@ public class MTLTextureCodableContainer: Codable {
     }
 
     public func texture(device: MTLDevice) throws -> MTLTexture {
-        enum Error: Swift.Error {
-            case missingBaseAddress
-        }
-
         guard let texture = device.makeTexture(descriptor: self.descriptor.descriptor)
         else { throw MetalError.MTLTextureSerializationError.allocationFailed }
 
-        try self.data.withUnsafeMutableBytes { p in
-            guard let pointer = p.baseAddress
+        try self.data.withUnsafeMutableBytes {
+            guard let pointer = $0.baseAddress
             else { throw Error.missingBaseAddress }
 
             guard let pixelFormatSize = texture.pixelFormat.bytesPerPixel
