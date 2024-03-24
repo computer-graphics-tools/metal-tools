@@ -26,7 +26,7 @@ void integralImage(
             const auto currentValue = source.read(currentPosition);
             const auto resultValue = previousValue + currentValue;
             destination.write(resultValue, currentPosition);
-            previousValue = currentValue;
+            previousValue = resultValue;
         }
     } else {
         if (!deviceSupportsNonuniformThreadgroups) {
@@ -42,7 +42,7 @@ void integralImage(
             const auto currentValue = source.read(currentPosition);
             const auto resultValue = previousValue + currentValue;
             destination.write(resultValue, currentPosition);
-            previousValue = currentValue;
+            previousValue = resultValue;
         }
     }
 }

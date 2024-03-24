@@ -35,7 +35,7 @@ final class IntegralImageTests: XCTestCase {
             usage: [.shaderRead, .shaderRead]
         )
 
-        let sourceValues = [Float32](repeating: .random(0, 0.3), count: 16)
+        let sourceValues = [Float32](repeating: 0.1, count: 16)
         sourceValues.withUnsafeBufferPointer {
             if let baseAddress = $0.baseAddress {
                 self.source.replace(
@@ -53,8 +53,9 @@ final class IntegralImageTests: XCTestCase {
             for column in 0 ..< 4 {
                 let position = row * 4 + column
                 let currentValue = sourceValues[position]
-                self.expectedResult[position] = currentValue + previousValue
-                previousValue = currentValue
+                let resulValue = currentValue + previousValue
+                self.expectedResult[position] = resulValue
+                previousValue = resulValue
             }
         }
         for column in 0 ..< 4 {
@@ -62,15 +63,16 @@ final class IntegralImageTests: XCTestCase {
             for row in 0 ..< 4 {
                 let position = row * 4 + column
                 let currentValue = self.expectedResult[position]
-                self.expectedResult[position] = currentValue + previousValue
-                previousValue = currentValue
+                let resulValue = currentValue + previousValue
+                self.expectedResult[position] = resulValue
+                previousValue = resulValue
             }
         }
     }
 
     // MARK: - Testing
 
-    func testEuclideanDistance() throws {
+    func testIntegralImage() throws {
         try self.context.scheduleAndWait { commandBuffer in
             self.integralImageFloat(
                 source: self.source,
