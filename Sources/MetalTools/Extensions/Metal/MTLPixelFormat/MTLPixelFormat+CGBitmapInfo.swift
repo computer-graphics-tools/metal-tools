@@ -53,7 +53,7 @@ private enum BitmapInfo {
 }
 
 public extension MTLPixelFormat {
-    var bitmapInfo: UInt32? {
+    var compatibleBitmapInfo: UInt32? {
         switch self {
         case .a8Unorm:
             return BitmapInfo.a
@@ -62,7 +62,7 @@ public extension MTLPixelFormat {
         case .r16Unorm, .r16Snorm, .r16Uint, .r16Sint:
             return BitmapInfo.r
         case .r16Float:
-            return BitmapInfo.r | BitmapInfo.useFloats
+            return BitmapInfo.r | BitmapInfo.useFloats | BitmapInfo.littleEndian2Bytes
         case .r32Uint, .r32Sint:
             return BitmapInfo.r
         case .r32Float:
@@ -75,6 +75,8 @@ public extension MTLPixelFormat {
             return BitmapInfo.alphaLast | BitmapInfo.littleEndian2Bytes
         case .rgba16Float:
             return BitmapInfo.alphaLast | BitmapInfo.useFloats | BitmapInfo.littleEndian2Bytes
+        case .rgba32Float:
+            return BitmapInfo.alphaLast | BitmapInfo.useFloats | BitmapInfo.littleEndian4Bytes
         case .rgb10a2Unorm, .rgb10a2Uint:
 
             // MARK: should be packed1010102 with big endian, but it seems to be broken

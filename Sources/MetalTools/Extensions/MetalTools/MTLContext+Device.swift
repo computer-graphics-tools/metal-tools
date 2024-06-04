@@ -216,30 +216,36 @@ public extension MTLContext {
         )
     }
 
-    func heap(descriptor: MTLHeapDescriptor) -> MTLHeap? {
-        self.device.makeHeap(descriptor: descriptor)
+    func heap(descriptor: MTLHeapDescriptor) throws -> MTLHeap {
+        guard let heap = self.device.makeHeap(descriptor: descriptor)
+        else { throw MetalError.MTLDeviceError.heapCreationFailed }
+        return heap
     }
 
     func buffer(
         length: Int,
         options: MTLResourceOptions = []
-    ) -> MTLBuffer? {
-        self.device.makeBuffer(
+    ) throws -> MTLBuffer {
+        guard let buffer = self.device.makeBuffer(
             length: length,
             options: options
         )
+        else { throw MetalError.MTLDeviceError.bufferCreationFailed }
+        return buffer
     }
 
     func buffer(
         bytes pointer: UnsafeRawPointer,
         length: Int,
         options: MTLResourceOptions = []
-    ) -> MTLBuffer? {
-        self.device.makeBuffer(
+    ) throws -> MTLBuffer {
+        guard let buffer = self.device.makeBuffer(
             bytes: pointer,
             length: length,
             options: options
         )
+        else { throw MetalError.MTLDeviceError.bufferCreationFailed }
+        return buffer
     }
 
     func buffer(
@@ -247,17 +253,21 @@ public extension MTLContext {
         length: Int,
         options: MTLResourceOptions = [],
         deallocator: ((UnsafeMutableRawPointer, Int) -> Void)? = nil
-    ) -> MTLBuffer? {
-        self.device.makeBuffer(
+    ) throws -> MTLBuffer {
+        guard let buffer = self.device.makeBuffer(
             bytesNoCopy: pointer,
             length: length,
             options: options,
             deallocator: deallocator
         )
+        else { throw MetalError.MTLDeviceError.bufferCreationFailed }
+        return buffer
     }
 
-    func depthStencilState(descriptor: MTLDepthStencilDescriptor) -> MTLDepthStencilState? {
-        self.device.makeDepthStencilState(descriptor: descriptor)
+    func depthStencilState(descriptor: MTLDepthStencilDescriptor) throws -> MTLDepthStencilState {
+        guard let state = self.device.makeDepthStencilState(descriptor: descriptor)
+        else { throw MetalError.MTLDeviceError.depthStencilStateCreationFailed }
+        return state
     }
 
     func texture(descriptor: MTLTextureDescriptor) throws -> MTLTexture {
@@ -316,7 +326,7 @@ public extension MTLContext {
 
     func library(
         source: String,
-        options: MTLCompileOptions?
+        options: MTLCompileOptions? = nil
     ) throws -> MTLLibrary {
         try self.device.makeLibrary(
             source: source,
@@ -326,7 +336,7 @@ public extension MTLContext {
 
     func library(
         source: String,
-        options: MTLCompileOptions?,
+        options: MTLCompileOptions? = nil,
         completionHandler: @escaping MTLNewLibraryCompletionHandler
     ) {
         self.device.makeLibrary(
@@ -343,7 +353,7 @@ public extension MTLContext {
     func renderPipelineState(
         descriptor: MTLRenderPipelineDescriptor,
         options: MTLPipelineOption,
-        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedRenderPipelineReflection?>?
+        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedRenderPipelineReflection?>? = nil
     ) throws -> MTLRenderPipelineState {
         try self.device.makeRenderPipelineState(
             descriptor: descriptor,
@@ -381,7 +391,7 @@ public extension MTLContext {
     func computePipelineState(
         function computeFunction: MTLFunction,
         options: MTLPipelineOption,
-        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedComputePipelineReflection?>?
+        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedComputePipelineReflection?>? = nil
     ) throws -> MTLComputePipelineState {
         try self.device.makeComputePipelineState(
             function: computeFunction,
@@ -415,7 +425,7 @@ public extension MTLContext {
     func computePipelineState(
         descriptor: MTLComputePipelineDescriptor,
         options: MTLPipelineOption,
-        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedComputePipelineReflection?>?
+        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedComputePipelineReflection?>? = nil
     ) throws -> MTLComputePipelineState {
         try self.device.makeComputePipelineState(
             descriptor: descriptor,
@@ -468,7 +478,7 @@ public extension MTLContext {
     func renderPipelineState(
         tileDescriptor descriptor: MTLTileRenderPipelineDescriptor,
         options: MTLPipelineOption,
-        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedRenderPipelineReflection?>?
+        reflection: AutoreleasingUnsafeMutablePointer<MTLAutoreleasedRenderPipelineReflection?>? = nil
     ) throws -> MTLRenderPipelineState {
         try self.device.makeRenderPipelineState(
             tileDescriptor: descriptor,

@@ -74,8 +74,8 @@ final public class MTLFontAtlasProvider {
 
         // Flip context coordinate space so y increases downward
         context.translateBy(
-            x: .zero,
-            y: .init(height)
+            x: CGFloat.zero,
+            y: CGFloat(height)
         )
         context.scaleBy(
             x: 1,
