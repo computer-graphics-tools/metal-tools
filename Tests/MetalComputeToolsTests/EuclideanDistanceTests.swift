@@ -37,7 +37,7 @@ final class EuclideanDistanceTests: XCTestCase {
 
     // MARK: - Testing
 
-    func testEuclideanDistance() throws {
+    func testEuclideanDistance() async throws {
         let resultBuffer = try self.context.buffer(
             for: Float.self,
             options: .storageModeShared
@@ -46,7 +46,7 @@ final class EuclideanDistanceTests: XCTestCase {
         let originalTextureArea = Float(self.source.width * self.source.height)
         let euclideanDistance = originalTextureArea * sqrt(pow(constant, 2))
 
-        try self.context.scheduleAndWait { commandBuffer in
+        try await self.context.scheduleAsync { commandBuffer in
             self.textureAddConstantFloat(
                 source: self.source,
                 destination: self.destination,

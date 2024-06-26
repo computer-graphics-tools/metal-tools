@@ -72,8 +72,8 @@ final class IntegralImageTests: XCTestCase {
 
     // MARK: - Testing
 
-    func testIntegralImage() throws {
-        try self.context.scheduleAndWait { commandBuffer in
+    func testIntegralImage() async throws {
+        try await self.context.scheduleAsync { commandBuffer in
             self.integralImageFloat(
                 source: self.source,
                 destination: self.destination,

@@ -24,6 +24,10 @@ public enum MetalError {
         case textureCreationFailed
     }
 
+    public enum MTLCommandBufferError: Error {
+        case commandBufferExecutionFailed
+    }
+
     public enum MTLCommandQueueError: Error {
         case commandBufferCreationFailed
     }
