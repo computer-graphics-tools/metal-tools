@@ -1,7 +1,9 @@
 import MetalTools
-import SwiftMath
+import SIMDTools
+import simd
 
 final public class TextureMix {
+
     // MARK: - Type Definitions
 
     public struct Configuration: Equatable {
@@ -192,18 +194,12 @@ final public class TextureMix {
             configuration.anchorPoint.y * sourceTwoSize.y
         )
         let postTranslationValue = -preTranslationValue
-        let postTranslation = Matrix3x3f.translate(
-            tx: postTranslationValue.x,
-            ty: postTranslationValue.y
-        )
+        let postTranslation = float3x3.translate(value: postTranslationValue)
 
-        let scale: Matrix3x3f
+        let scale: float3x3
         switch configuration.scale {
         case let .arbitrary(scaleValue):
-            scale = .scale(
-                sx: scaleValue.x,
-                sy: scaleValue.y
-            )
+            scale = .scale(value: scaleValue)
         case .aspectFit:
             scale = .aspectFitScale(
                 originalSize: sourceTwoSize,
@@ -223,25 +219,19 @@ final public class TextureMix {
 
         let rotationX = tan(-configuration.rotation.x.radians / 2.0)
         let rotationY = -sin(-configuration.rotation.y.radians)
-        let rotation: Matrix3x3f = .shear(sx: rotationX) * .shear(sy: rotationY) * .shear(sx: rotationX)
+        let rotation: float3x3 = .shear(x: rotationX) * .shear(y: rotationY) * .shear(x: rotationX)
 
-        let translation: Matrix3x3f
+        let translation: float3x3
         switch configuration.position {
         case let .normalized(translationValue):
-            translation = .translate(
-                tx: translationValue.x * sourceOneSize.x,
-                ty: translationValue.y * sourceOneSize.y
-            )
+            translation = .translate(value: translationValue * sourceOneSize)
         case let .pixel(translationValue):
-            translation = .translate(
-                tx: .init(translationValue.x),
-                ty: .init(translationValue.y)
-            )
+            translation = .translate(value: SIMD2<Float32>(translationValue))
         }
 
-        let transform = .identity * translation * rotation * scale * postTranslation
+        let transform: float3x3 = translation * rotation * scale * postTranslation
 
-        return .init(transform.inversed)
+        return transform.inverse
     }
 
     public static let functionName = "textureMix"
