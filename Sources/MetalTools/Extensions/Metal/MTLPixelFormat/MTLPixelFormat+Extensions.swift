@@ -1,10 +1,12 @@
 import Metal
 
 public extension MTLPixelFormat {
+    /// Represents the scalar type of the pixel format components.
     enum ScalarType: String {
         case float, half, ushort, short, uint, int
     }
-
+    
+    /// The number of bits per component in the pixel format.
     var bitsPerComponent: Int? {
         guard !self.isCompressed,
               let bitsPerPixel = self.bitsPerPixel,
@@ -13,6 +15,7 @@ public extension MTLPixelFormat {
         return bitsPerPixel / componentCount
     }
 
+    /// The total number of bits per pixel in the format.
     var bitsPerPixel: Int? {
         if self.isOrdinary8Bit {
             return 8
@@ -27,7 +30,8 @@ public extension MTLPixelFormat {
         }
         return nil
     }
-
+    
+    /// The number of color components in the pixel format.
     var componentCount: Int? {
         switch self {
         case .invalid:
@@ -61,7 +65,8 @@ public extension MTLPixelFormat {
         default: return nil
         }
     }
-
+    
+    /// The number of bytes per pixel in the format.
     var bytesPerPixel: Int? {
         switch self {
         case .a8Unorm, .r8Unorm, .r8Snorm, .r8Uint, .r8Sint, .stencil8, .r8Unorm_srgb:
@@ -103,7 +108,8 @@ public extension MTLPixelFormat {
             return nil
         }
     }
-
+    
+    /// Indicates if the format is an ordinary 8-bit format.
     var isOrdinary8Bit: Bool {
         switch self {
         case .a8Unorm, .r8Unorm, .r8Unorm_srgb, .r8Snorm, .r8Uint, .r8Sint:
@@ -111,7 +117,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is an ordinary 16-bit format.
     var isOrdinary16Bit: Bool {
         switch self {
         case .r16Unorm, .r16Snorm, .r16Uint, .r16Sint, .r16Float,
@@ -120,7 +127,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a packed 16-bit format.
     var isPacked16Bit: Bool {
         switch self {
         case .b5g6r5Unorm, .a1bgr5Unorm, .abgr4Unorm, .bgr5A1Unorm:
@@ -128,7 +136,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is an ordinary 32-bit format.
     var isOrdinary32Bit: Bool {
         switch self {
         case .r32Uint, .r32Sint, .r32Float,
@@ -138,7 +147,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a packed 32-bit format.
     var isPacked32Bit: Bool {
         switch self {
         case .rgb10a2Unorm, .rgb10a2Uint, .rg11b10Float, .rgb9e5Float,
@@ -147,7 +157,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a normal 64-bit format.
     var isNormal64Bit: Bool {
         switch self {
         case .rg32Uint, .rg32Sint, .rg32Float, .rgba16Unorm,
@@ -157,7 +168,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a normal 128-bit format.
     var isNormal128Bit: Bool {
         switch self {
         case .rgba32Uint, .rgba32Sint, .rgba32Float:
@@ -165,7 +177,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format uses sRGB color space.
     var isSRGB: Bool {
         switch self {
         case .bgra8Unorm_srgb, .bgr10_xr_srgb, .bgra10_xr_srgb,
@@ -179,7 +192,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format supports extended range.
     var isExtendedRange: Bool {
         switch self {
         case .bgr10_xr, .bgr10_xr_srgb,
@@ -188,7 +202,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a compressed format.
     var isCompressed: Bool {
         return self.isPVRTC
             || self.isEAC
@@ -199,7 +214,8 @@ public extension MTLPixelFormat {
             || self.isRGTC
             || self.isBPTC
     }
-
+    
+    /// Indicates if the format is a PVRTC compressed format.
     var isPVRTC: Bool {
         switch self {
         case .pvrtc_rgb_2bpp, .pvrtc_rgb_2bpp_srgb, .pvrtc_rgb_4bpp, .pvrtc_rgb_4bpp_srgb,
@@ -208,7 +224,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is an ASTC compressed format.
     var isASTC: Bool {
         switch self {
         case .astc_4x4_srgb, .astc_5x4_srgb, .astc_5x5_srgb, .astc_6x5_srgb, .astc_6x6_srgb, .astc_8x5_srgb,
@@ -220,7 +237,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a HDR ASTC compressed format.
     var isHDRASTC: Bool {
         switch self {
         case .astc_4x4_hdr, .astc_5x4_hdr, .astc_5x5_hdr, .astc_6x5_hdr, .astc_6x6_hdr, .astc_8x5_hdr,
@@ -231,7 +249,7 @@ public extension MTLPixelFormat {
         }
     }
 
-
+    /// Indicates if the format is an ETC compressed format.
     var isETC: Bool {
         switch self {
         case .etc2_rgb8, .etc2_rgb8_srgb, .etc2_rgb8a1, .etc2_rgb8a1_srgb:
@@ -240,6 +258,7 @@ public extension MTLPixelFormat {
         }
     }
 
+    /// Indicates if the format is an EAC compressed format.
     var isEAC: Bool {
         switch self {
         case .eac_r11Unorm, .eac_r11Snorm, .eac_rg11Unorm,
@@ -249,6 +268,7 @@ public extension MTLPixelFormat {
         }
     }
 
+    /// Indicates if the format is an S3TC compressed format.
     var isS3TC: Bool {
         switch self {
         case .bc1_rgba, .bc1_rgba_srgb,
@@ -258,7 +278,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is an RGTC compressed format.
     var isRGTC: Bool {
         switch self {
         case .bc4_rUnorm, .bc4_rSnorm,
@@ -267,7 +288,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a BPTC compressed format.
     var isBPTC: Bool {
         switch self {
         case .bc6H_rgbFloat, .bc6H_rgbuFloat,
@@ -276,7 +298,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format is a YUV format.
     var isYUV: Bool {
         switch self {
         case .gbgr422, .bgrg422:
@@ -285,13 +308,15 @@ public extension MTLPixelFormat {
         }
     }
 
+    /// Indicates if the format is a depth format.
     var isDepth: Bool {
         switch self {
         case .depth16Unorm, .depth32Float: return true
         default: return false
         }
     }
-
+    
+    /// Indicates if the format includes a stencil component.
     var isStencil: Bool {
         switch self {
         case .stencil8, .depth32Float_stencil8, .x32_stencil8:
@@ -299,7 +324,8 @@ public extension MTLPixelFormat {
         default: return false
         }
     }
-
+    
+    /// Indicates if the format can be used as a render target.
     var isRenderable: Bool {
         // Depth, stencil, YUV & compressed pixel formats check.
         guard !(self.isDepth || self.isStencil || self.isYUV || self.isCompressed)

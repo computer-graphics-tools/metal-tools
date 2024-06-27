@@ -1,13 +1,24 @@
 import MetalTools
+import Metal
 
+/// A class that performs texture copy operations using Metal.
 final public class TextureCopy {
-    // MARK: - Propertires
+    // MARK: - Properties
 
+    /// The compute pipeline state used for the texture copy operation.
     public let pipelineState: MTLComputePipelineState
+
+    /// Indicates whether the device supports non-uniform threadgroups.
     private let deviceSupportsNonuniformThreadgroups: Bool
 
     // MARK: - Life Cycle
 
+    /// Initializes a new instance of `TextureCopy` using a Metal context.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context to use.
+    ///   - scalarType: The scalar type for the computation. Defaults to `.half`.
+    /// - Throws: An error if the initialization fails.
     public convenience init(
         context: MTLContext,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -18,6 +29,12 @@ final public class TextureCopy {
         )
     }
 
+    /// Initializes a new instance of `TextureCopy` using a Metal library.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library containing the kernel functions.
+    ///   - scalarType: The scalar type for the computation. Defaults to `.half`.
+    /// - Throws: An error if the initialization fails.
     public init(
         library: MTLLibrary,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -37,6 +54,12 @@ final public class TextureCopy {
 
     // MARK: - Encode
 
+    /// Encodes a full texture copy operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -49,6 +72,12 @@ final public class TextureCopy {
         )
     }
 
+    /// Encodes a full texture copy operation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - encoder: The compute command encoder to use.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -61,6 +90,14 @@ final public class TextureCopy {
         )
     }
 
+    /// Encodes a partial texture copy operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - sourceTexureRegion: The region of the source texture to copy.
+    ///   - source: The source texture.
+    ///   - destinationTextureOrigin: The origin in the destination texture to copy to.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         region sourceTexureRegion: MTLRegion,
         from source: MTLTexture,
@@ -77,6 +114,14 @@ final public class TextureCopy {
         )
     }
 
+    /// Encodes a partial texture copy operation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - sourceTexureRegion: The region of the source texture to copy.
+    ///   - source: The source texture.
+    ///   - destinationTextureOrigin: The origin in the destination texture to copy to.
+    ///   - destination: The destination texture.
+    ///   - encoder: The compute command encoder to use.
     public func callAsFunction(
         region sourceTexureRegion: MTLRegion,
         from source: MTLTexture,
@@ -93,6 +138,12 @@ final public class TextureCopy {
         )
     }
 
+    /// Encodes a full texture copy operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to encode into.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,
@@ -108,6 +159,12 @@ final public class TextureCopy {
         }
     }
 
+    /// Encodes a full texture copy operation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - encoder: The compute command encoder to use.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,
@@ -122,6 +179,14 @@ final public class TextureCopy {
         )
     }
 
+    /// Encodes a partial texture copy operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - sourceTexureRegion: The region of the source texture to copy.
+    ///   - source: The source texture.
+    ///   - destinationTextureOrigin: The origin in the destination texture to copy to.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to encode into.
     public func copy(
         region sourceTexureRegion: MTLRegion,
         from source: MTLTexture,
@@ -141,6 +206,14 @@ final public class TextureCopy {
         }
     }
 
+    /// Encodes a partial texture copy operation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - sourceTexureRegion: The region of the source texture to copy.
+    ///   - source: The source texture.
+    ///   - destinationTextureOrigin: The origin in the destination texture to copy to.
+    ///   - destination: The destination texture.
+    ///   - encoder: The compute command encoder to use.
     public func copy(
         region sourceTexureRegion: MTLRegion,
         from source: MTLTexture,
@@ -249,5 +322,6 @@ final public class TextureCopy {
         }
     }
 
+    /// The name of the Metal kernel function used for texture copying.
     public static let functionName = "textureCopy"
 }

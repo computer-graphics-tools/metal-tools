@@ -1,12 +1,21 @@
 import MetalTools
+import Metal
 
+/// A class that calculates the Euclidean distance between two textures using Metal.
 final public class EuclideanDistance {
     // MARK: - Properties
 
+    /// The compute pipeline state used for the Euclidean distance calculation.
     public let pipelineState: MTLComputePipelineState
 
     // MARK: - Life Cycle
 
+    /// Initializes a new instance of `EuclideanDistance` using a Metal context.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context to use.
+    ///   - scalarType: The scalar type for the computation. Defaults to `.half`.
+    /// - Throws: An error if the initialization fails.
     convenience public init(
         context: MTLContext,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -17,6 +26,12 @@ final public class EuclideanDistance {
         )
     }
 
+    /// Initializes a new instance of `EuclideanDistance` using a Metal library.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library containing the kernel functions.
+    ///   - scalarType: The scalar type for the computation. Defaults to `.half`.
+    /// - Throws: An error if the initialization fails.
     public init(
         library: MTLLibrary,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -27,6 +42,13 @@ final public class EuclideanDistance {
 
     // MARK: - Encode
 
+    /// Encodes the Euclidean distance computation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - textureOne: The first input texture.
+    ///   - textureTwo: The second input texture.
+    ///   - resultBuffer: The buffer to store the result.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         textureOne: MTLTexture,
         textureTwo: MTLTexture,
@@ -41,6 +63,13 @@ final public class EuclideanDistance {
         )
     }
 
+    /// Encodes the Euclidean distance computation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - textureOne: The first input texture.
+    ///   - textureTwo: The second input texture.
+    ///   - resultBuffer: The buffer to store the result.
+    ///   - encoder: The compute command encoder to use.
     public func callAsFunction(
         textureOne: MTLTexture,
         textureTwo: MTLTexture,
@@ -55,6 +84,13 @@ final public class EuclideanDistance {
         )
     }
 
+    /// Encodes the Euclidean distance computation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - textureOne: The first input texture.
+    ///   - textureTwo: The second input texture.
+    ///   - resultBuffer: The buffer to store the result.
+    ///   - commandBuffer: The command buffer to encode into.
     public func encode(
         textureOne: MTLTexture,
         textureTwo: MTLTexture,
@@ -72,6 +108,13 @@ final public class EuclideanDistance {
         }
     }
 
+    /// Encodes the Euclidean distance computation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - textureOne: The first input texture.
+    ///   - textureTwo: The second input texture.
+    ///   - resultBuffer: The buffer to store the result.
+    ///   - encoder: The compute command encoder to use.
     public func encode(
         textureOne: MTLTexture,
         textureTwo: MTLTexture,
@@ -107,5 +150,7 @@ final public class EuclideanDistance {
         )
     }
 
+
+    /// The name of the Metal kernel function used for Euclidean distance calculation.
     public static let functionName = "euclideanDistance"
 }

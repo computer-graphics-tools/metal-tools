@@ -1,10 +1,25 @@
 import Metal
+import CoreGraphics
+import CoreImage
 
+/// A class for rendering rectangles using Metal.
 final public class RectangleRender {
+
+    /// A descriptor for the geometry of a rectangle.
     final public class GeometryDescriptor {
+        /// The color of the rectangle.
         public let color: SIMD4<Float>
+
+        /// The normalized rectangle defining the bounds of the rectangle.
         public let normalizedRect: SIMD4<Float>
 
+        /// Initializes a new `GeometryDescriptor` with the specified color and normalized rectangle.
+        ///
+        /// - Parameters:
+        ///   - color: The color of the rectangle.
+        ///   - normalizedRect: The normalized rectangle defining the bounds of the rectangle.
+        ///
+        /// This initializer sets the color and normalized rectangle for the `GeometryDescriptor`.
         public init(
             color: SIMD4<Float>,
             normalizedRect: SIMD4<Float>
@@ -13,6 +28,13 @@ final public class RectangleRender {
             self.normalizedRect = normalizedRect
         }
 
+        /// Convenience initializer for creating a `GeometryDescriptor` from `CGColor` and `CGRect`.
+        ///
+        /// - Parameters:
+        ///   - color: The color of the rectangle as a `CGColor`.
+        ///   - normalizedRect: The normalized rectangle defining the bounds of the rectangle as a `CGRect`.
+        ///
+        /// This initializer converts the `CGColor` and `CGRect` to the appropriate formats and initializes the `GeometryDescriptor`.
         public convenience init(
             color: CGColor,
             normalizedRect: CGRect
@@ -39,21 +61,27 @@ final public class RectangleRender {
 
     // MARK: - Properties
 
+    /// The array of geometry descriptors for the rectangles.
     public var geometryDescriptors: [GeometryDescriptor] = [] {
         didSet { self.updateGeometry() }
     }
 
+    /// The array of rectangles to be rendered.
     private var rectangles: [Rectangle] = []
+
+    /// The render pipeline state for rendering rectangles.
     private let renderPipelineState: MTLRenderPipelineState
 
     // MARK: - Life Cycle
 
-    /// Creates a new instance of RectangleRenderer.
+    /// Creates a new instance of `RectangleRender`.
     ///
     /// - Parameters:
-    ///   - context: Alloy's Metal context.
+    ///   - context: The Metal context.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Library or function creation errors.
+    ///
+    /// This initializer sets up the render pipeline state and prepares the renderer for rendering rectangles.
     public convenience init(
         context: MTLContext,
         pixelFormat: MTLPixelFormat = .bgra8Unorm
@@ -64,12 +92,14 @@ final public class RectangleRender {
         )
     }
 
-    /// Creates a new instance of RectangleRenderer.
+    /// Creates a new instance of `RectangleRender` with the specified library and pixel format.
     ///
     /// - Parameters:
-    ///   - library: Alloy's shader library.
+    ///   - library: Metal library.
     ///   - pixelFormat: Color attachment's pixel format.
-    /// - Throws: Function creation error.
+    /// - Throws: Library or function creation errors.
+    ///
+    /// This initializer sets up the render pipeline state for the `RectangleRender`.
     public init(
         library: MTLLibrary,
         pixelFormat: MTLPixelFormat = .bgra8Unorm
@@ -88,6 +118,9 @@ final public class RectangleRender {
 
     // MARK: - Helpers
 
+    /// Updates the geometry for the rectangles based on the current descriptors.
+    ///
+    /// This method updates the geometry for the rectangles by processing the descriptors.
     private func updateGeometry() {
         self.rectangles.removeAll()
         self.geometryDescriptors.forEach { descriptor in

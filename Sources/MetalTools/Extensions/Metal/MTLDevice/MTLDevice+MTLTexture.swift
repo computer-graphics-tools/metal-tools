@@ -1,7 +1,22 @@
 import Metal
+import CoreGraphics
 
 public extension MTLDevice {
-    func texture(from cgImage: CGImage, srgb: Bool = false, usage: MTLTextureUsage = []) throws -> MTLTexture {
+    /// Creates a Metal texture from a CGImage.
+    ///
+    /// This method supports both monochrome and RGB color spaces, and can optionally use sRGB color space.
+    ///
+    /// - Parameters:
+    ///   - cgImage: The source CGImage to create the texture from.
+    ///   - srgb: A boolean indicating whether to use sRGB color space (default is false).
+    ///   - usage: The intended usage of the texture (default is empty).
+    /// - Returns: A Metal texture containing the image data.
+    /// - Throws: MetalError.MTLDeviceError.textureCreationFailed if texture creation fails.
+    func texture(
+        from cgImage: CGImage,
+        srgb: Bool = false,
+        usage: MTLTextureUsage = []
+    ) throws -> MTLTexture {
         // AlphaFirst – the alpha channel is next to the red channel, argb and bgra are both alpha first formats.
         // AlphaLast – the alpha channel is next to the blue channel, rgba and abgr are both alpha last formats.
         // LittleEndian – blue comes before red, bgra and abgr are little endian formats.

@@ -3,15 +3,32 @@
 import CoreGraphics
 import Foundation
 import Metal
+import UIKit.UIFont
 
+/// A class representing a text mesh for rendering text in Metal.
 final class TextMesh {
+    /// Errors that can occur during the initialization of a `TextMesh`.
     enum Error: Swift.Error {
+        /// The error for a failed initialization.
         case initializationFailed
     }
 
+    /// The vertex buffer for the text mesh.
     private(set) var vertexBuffer: MTLBuffer!
+
+    /// The index buffer for the text mesh.
     private(set) var indexBuffer: MTLBuffer!
 
+    /// Initializes a new text mesh with the specified parameters.
+    ///
+    /// - Parameters:
+    ///   - string: The string to render.
+    ///   - rect: The rectangle defining the bounds of the text.
+    ///   - fontAtlas: The font atlas to use for rendering the text.
+    ///   - device: The Metal device to use for creating buffers.
+    /// - Throws: An error if the initialization fails.
+    ///
+    /// This initializer creates a text mesh for rendering the specified string within the given rectangle using the provided font atlas and Metal device.
     init(
         string: String,
         rect: SIMD4<Float>,

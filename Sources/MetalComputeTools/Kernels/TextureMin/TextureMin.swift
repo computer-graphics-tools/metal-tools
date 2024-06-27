@@ -1,12 +1,23 @@
 import MetalTools
+import Metal
 
+/// A class for performing minimum value extraction from a texture using Metal.
 final public class TextureMin {
-    // MARK: - Propertires
+    // MARK: - Properties
 
+    /// The Metal compute pipeline state for the minimum value extraction operation.
     public let pipelineState: MTLComputePipelineState
 
     // MARK: - Life Cycle
 
+    /// Creates a new instance of `TextureMin`.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context.
+    ///   - scalarType: The scalar type for the minimum value extraction operation. Defaults to `.half`.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This convenience initializer sets up the minimum value extraction operation with the specified context and scalar type.
     public convenience init(
         context: MTLContext,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -17,6 +28,14 @@ final public class TextureMin {
         )
     }
 
+    /// Creates a new instance of `TextureMin` with the specified library and scalar type.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library to use for the minimum value extraction operation.
+    ///   - scalarType: The scalar type for the minimum value extraction operation. Defaults to `.half`.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This initializer sets up the pipeline state for the minimum value extraction operation.
     public init(
         library: MTLLibrary,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -27,6 +46,14 @@ final public class TextureMin {
 
     // MARK: - Encode
 
+    /// Encodes the minimum value extraction operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the minimum value.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the minimum value extraction operation using the provided texture, result buffer, and command buffer.
     public func callAsFunction(
         source: MTLTexture,
         result: MTLBuffer,
@@ -39,6 +66,14 @@ final public class TextureMin {
         )
     }
 
+    /// Encodes the minimum value extraction operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the minimum value.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the minimum value extraction operation using the provided texture, result buffer, and command encoder.
     public func callAsFunction(
         source: MTLTexture,
         result: MTLBuffer,
@@ -51,6 +86,14 @@ final public class TextureMin {
         )
     }
 
+    /// Encodes the minimum value extraction operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the minimum value.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the minimum value extraction operation using the provided texture, result buffer, and command buffer.
     public func encode(
         source: MTLTexture,
         result: MTLBuffer,
@@ -66,6 +109,14 @@ final public class TextureMin {
         }
     }
 
+    /// Encodes the minimum value extraction operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the minimum value.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the minimum value extraction operation using the provided texture, result buffer, and command encoder.
     public func encode(
         source: MTLTexture,
         result: MTLBuffer,
@@ -100,5 +151,6 @@ final public class TextureMin {
         )
     }
 
+    /// The name of the Metal function used for minimum value extraction.
     public static let functionName = "textureMin"
 }

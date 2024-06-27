@@ -1,9 +1,10 @@
 import Metal
 
+/// A typealias for the BlendingMode enum to make it easier to use.
 public typealias BlendingMode = MTLRenderPipelineColorAttachmentDescriptor.BlendingMode
 
 public extension MTLRenderPipelineColorAttachmentDescriptor {
-    /// Blend Mode Options
+    /// Enum representing different blending modes for color attachments.
     enum BlendingMode {
         /// Disabled blending mode. Use this with fully opaque surfaces for extra performance.
         case none
@@ -25,11 +26,11 @@ public extension MTLRenderPipelineColorAttachmentDescriptor {
         case dodge
     }
 
-    /// Setup a certain blending mode.
+    /// Sets up the color attachment with a specified blending mode.
     ///
-    /// - Parameter blending: Blending mode.
+    /// - Parameter blending: The blending mode to apply.
     func setup(blending: BlendingMode) {
-        // Default
+        // Default settings
         self.isBlendingEnabled = true
         self.rgbBlendOperation = .add
         self.sourceRGBBlendFactor = .one

@@ -1,12 +1,23 @@
 import MetalTools
+import Metal
 
+/// A class for performing mean value computation from a texture using Metal.
 final public class TextureMean {
-    // MARK: - Propertires
+    // MARK: - Properties
 
+    /// The Metal compute pipeline state for the mean value computation operation.
     public let pipelineState: MTLComputePipelineState
 
     // MARK: - Life Cycle
 
+    /// Creates a new instance of `TextureMean`.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context.
+    ///   - scalarType: The scalar type for the mean value computation operation. Defaults to `.half`.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This convenience initializer sets up the mean value computation operation with the specified context and scalar type.
     public convenience init(
         context: MTLContext,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -17,6 +28,14 @@ final public class TextureMean {
         )
     }
 
+    /// Creates a new instance of `TextureMean` with the specified library and scalar type.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library to use for the mean value computation operation.
+    ///   - scalarType: The scalar type for the mean value computation operation. Defaults to `.half`.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This initializer sets up the pipeline state for the mean value computation operation.
     public init(
         library: MTLLibrary,
         scalarType: MTLPixelFormat.ScalarType = .half
@@ -27,6 +46,14 @@ final public class TextureMean {
 
     // MARK: - Encode
 
+    /// Encodes the mean value computation operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the mean value.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the mean value computation operation using the provided texture, result buffer, and command buffer.
     public func callAsFunction(
         source: MTLTexture,
         result: MTLBuffer,
@@ -39,6 +66,14 @@ final public class TextureMean {
         )
     }
 
+    /// Encodes the mean value computation operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the mean value.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the mean value computation operation using the provided texture, result buffer, and command encoder.
     public func callAsFunction(
         source: MTLTexture,
         result: MTLBuffer,
@@ -51,6 +86,14 @@ final public class TextureMean {
         )
     }
 
+    /// Encodes the mean value computation operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the mean value.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the mean value computation operation using the provided texture, result buffer, and command buffer.
     public func encode(
         source: MTLTexture,
         result: MTLBuffer,
@@ -66,6 +109,14 @@ final public class TextureMean {
         }
     }
 
+    /// Encodes the mean value computation operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - result: The buffer to store the mean value.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the mean value computation operation using the provided texture, result buffer, and command encoder.
     public func encode(
         source: MTLTexture,
         result: MTLBuffer,
@@ -100,5 +151,6 @@ final public class TextureMean {
         )
     }
 
+    /// The name of the Metal function used for mean value computation.
     public static let functionName = "textureMean"
 }

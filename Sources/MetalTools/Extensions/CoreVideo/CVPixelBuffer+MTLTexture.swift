@@ -2,6 +2,13 @@ import CoreVideo.CVPixelBuffer
 import Metal
 
 public extension CVPixelBuffer {
+    /// Creates a Metal texture from the pixel buffer using the provided texture cache.
+    ///
+    /// - Parameters:
+    ///   - cache: The CVMetalTextureCache to use for creating the texture.
+    ///   - pixelFormat: The desired pixel format for the Metal texture.
+    ///   - planeIndex: The index of the plane to create the texture from (default is 0).
+    /// - Returns: An MTLTexture if successful, nil otherwise.
     func metalTexture(
         using cache: CVMetalTextureCache,
         pixelFormat: MTLPixelFormat,
@@ -33,6 +40,11 @@ public extension CVPixelBuffer {
 }
 
 public extension MTLContext {
+    /// Creates a CVMetalTextureCache for the context's device.
+    ///
+    /// - Parameter textureAge: The maximum age of textures in the cache (default is 1.0).
+    /// - Returns: A new CVMetalTextureCache instance.
+    /// - Throws: MetalError.MTLContextError.textureCacheCreationFailed if creation fails.
     func textureCache(textureAge: Float = 1.0) throws -> CVMetalTextureCache {
         let textureAgeKey = kCVMetalTextureCacheMaximumTextureAgeKey as NSString
         let textureAgeValue = NSNumber(value: textureAge)
@@ -55,6 +67,9 @@ public extension MTLContext {
 }
 
 public extension MTLTexture {
+    /// Creates a CVPixelBuffer from the Metal texture.
+    ///
+    /// - Returns: A CVPixelBuffer containing the texture data, or nil if creation fails.
     var pixelBuffer: CVPixelBuffer? {
         guard let cvPixelFormat = self.pixelFormat
             .compatibleCVPixelFormat

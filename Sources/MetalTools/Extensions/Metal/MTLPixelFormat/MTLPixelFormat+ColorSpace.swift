@@ -2,6 +2,14 @@ import CoreGraphics
 import Metal
 
 public extension MTLPixelFormat {
+    /// Returns a compatible CGColorSpace for the MTLPixelFormat.
+    ///
+    /// This property provides an appropriate CGColorSpace that matches the color
+    /// representation of the MTLPixelFormat. It's useful when creating CGImages or
+    /// CGContexts that need to accurately represent the color data stored in textures
+    /// with this pixel format.
+    ///
+    /// - Returns: A CGColorSpace compatible with this pixel format, or nil if there's no direct match.
     var compatibleColorSpace: CGColorSpace? {
         switch self {
         case .a8Unorm, .r8Unorm, .r8Snorm, .r8Uint, .r8Sint, .r16Unorm, .r16Snorm, .r16Uint, .r16Sint,

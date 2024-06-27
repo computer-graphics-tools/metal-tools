@@ -12,8 +12,8 @@ public extension MTLTexture {
     ///     since `T` could be anything and may not have an init that takes a literal
     ///     value.
     /// - Returns: Swift array containing texture's pixel data.
-
-    private func array<T>(
+    /// - Throws: An error if the resource is unavailable on the CPU or if the feature channels are invalid.
+    func array<T>(
         width: Int,
         height: Int,
         featureChannels: Int,

@@ -11,6 +11,14 @@ public extension MTLTexture {
     typealias NSUIImage = NSImage
     #endif
 
+    /// Converts the texture to a `CGImage`.
+    ///
+    /// - Parameter colorSpace: Optional. The color space to use for the `CGImage`.
+    /// - Returns: A `CGImage` representation of the texture.
+    /// - Throws: An error if the texture is not accessible on the CPU or if image creation fails.
+    ///
+    /// This method converts the texture to a `CGImage` by reading its pixel data. It supports
+    /// different pixel formats and handles the conversion appropriately.
     func cgImage(colorSpace: CGColorSpace? = nil) throws -> CGImage {
         guard self.isAccessibleOnCPU
         else { throw MetalError.MTLTextureError.imageCreationFailed }
@@ -156,7 +164,14 @@ public extension MTLTexture {
         default: throw MetalError.MTLTextureError.imageIncompatiblePixelFormat
         }
     }
-
+    
+    /// Converts the texture to a `NSUIImage`.
+    ///
+    /// - Parameter colorSpace: Optional. The color space to use for the `NSUIImage`.
+    /// - Returns: A `NSUIImage` representation of the texture.
+    /// - Throws: An error if the conversion to `CGImage` fails.
+    ///
+    /// This method first converts the texture to a `CGImage` and then creates a `NSUIImage` from it.
     func image(colorSpace: CGColorSpace? = nil) throws -> NSUIImage {
         let cgImage = try self.cgImage(colorSpace: colorSpace)
         #if os(iOS)

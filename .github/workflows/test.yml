@@ -1,0 +1,21 @@
+name: Test Swift Package
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: swift-actions/setup-swift@v2
+      with:
+        swift-version: '5.9'
+
+    - name: Build
+      run: swift build
+
+    - name: Run tests
+      run: swift test

@@ -1,6 +1,7 @@
 import CoreGraphics
 import Metal
 
+/// Private enumeration containing bitmap information constants.
 private enum BitmapInfo {
     static let noAlpha: UInt32 = CGImageAlphaInfo.none.rawValue
     static let alphaOnly: UInt32 = CGImageAlphaInfo.alphaOnly.rawValue
@@ -12,13 +13,16 @@ private enum BitmapInfo {
     static let littleEndian4Bytes: UInt32 = CGImageByteOrderInfo.order32Little.rawValue
     static let useFloats: UInt32 = CGBitmapInfo.floatComponents.rawValue
 
+    /// Alpha channel only
     static let a = Self.alphaOnly
+    /// Red channel only
     static let r = Self.noAlpha
+    /// RGBA format with 8 bits per channel, big endian
     static let rgba8888 = Self.alphaLast | Self.bigEndian4Bytes
-
-    // This is intentional. ByteOrder influences not only order of rgb, all the bytes.
+    /// BGRA format with 8 bits per channel, little endian
     static let bgra8888 = Self.alphaFirst | Self.littleEndian4Bytes
 
+    /// RGB565 pixel format
     static let packed565: UInt32 = {
         if #available(macCatalyst 13.1, *) {
             return CGImagePixelFormatInfo.RGB565.rawValue
@@ -27,6 +31,7 @@ private enum BitmapInfo {
         }
     }()
 
+    /// RGB555 pixel format
     static let packed555: UInt32 = {
         if #available(macCatalyst 13.1, *) {
             return CGImagePixelFormatInfo.RGB555.rawValue
@@ -35,6 +40,7 @@ private enum BitmapInfo {
         }
     }()
 
+    /// RGB101010 pixel format
     static let packed1010102: UInt32 = {
         if #available(macCatalyst 13.1, *) {
             return CGImagePixelFormatInfo.RGB101010.rawValue
@@ -43,6 +49,7 @@ private enum BitmapInfo {
         }
     }()
 
+    /// RGBCIF10 pixel format
     static let packed101010: UInt32 = {
         if #available(macCatalyst 13.1, *) {
             return CGImagePixelFormatInfo.RGBCIF10.rawValue
@@ -53,6 +60,12 @@ private enum BitmapInfo {
 }
 
 public extension MTLPixelFormat {
+    /// Returns the compatible CGBitmapInfo for the MTLPixelFormat.
+    ///
+    /// This property provides the appropriate CGBitmapInfo for creating CGImages
+    /// or CGContexts that are compatible with this MTLPixelFormat.
+    ///
+    /// - Returns: The compatible CGBitmapInfo as a UInt32, or nil if there's no compatible format.
     var compatibleBitmapInfo: UInt32? {
         switch self {
         case .a8Unorm:
@@ -78,14 +91,10 @@ public extension MTLPixelFormat {
         case .rgba32Float:
             return BitmapInfo.alphaLast | BitmapInfo.useFloats | BitmapInfo.littleEndian4Bytes
         case .rgb10a2Unorm, .rgb10a2Uint:
-
-            // MARK: should be packed1010102 with big endian, but it seems to be broken
-
+            // should be packed1010102 with big endian, but it seems to be broken
             return nil
         case .bgr10a2Unorm:
-
-            // MARK: should be packed1010102, but it's currently unsupported
-
+            // should be packed1010102, but it's currently unsupported
             return BitmapInfo.noAlpha | BitmapInfo.packed101010 | BitmapInfo.littleEndian4Bytes
         case .bgr10_xr, .bgr10_xr_srgb:
             return BitmapInfo.noAlpha | BitmapInfo.packed101010 | BitmapInfo.littleEndian4Bytes

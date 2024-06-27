@@ -1,9 +1,11 @@
 import MetalTools
+import Metal
 
+/// A class for rendering points using Metal.
 final public class PointsRender {
     // MARK: - Properties
 
-    /// Point positions described in a normalized coodrinate system.
+    /// Point positions described in a normalized coordinate system.
     public var pointsPositions: [SIMD2<Float>] {
         set {
             self.pointCount = newValue.count
@@ -30,22 +32,28 @@ final public class PointsRender {
 
     /// Point color. Red is default.
     public var color: SIMD4<Float> = .init(1, 0, 0, 1)
-    /// Point size in pixels. 40 is default.
+
+    /// Point size in pixels. Default is 40.
     public var pointSize: Float = 40
 
+    /// The buffer containing the point positions.
     private var pointsPositionsBuffer: MTLBuffer?
+
+    /// The number of points to render.
     private var pointCount: Int = 0
 
+    /// The render pipeline state for rendering points.
     private let renderPipelineState: MTLRenderPipelineState
 
     // MARK: - Life Cycle
 
-    /// Creates a new instance of PointsRenderer.
+    /// Creates a new instance of `PointsRender`.
     ///
     /// - Parameters:
-    ///   - context: Alloy's Metal context.
+    ///   - context: The Metal context.
     ///   - pixelFormat: Color attachment's pixel format.
-    /// - Throws: Library or function creation errors.
+    ///
+    /// This initializer sets up the render pipeline state and prepares the renderer for rendering points.
     public convenience init(
         context: MTLContext,
         pixelFormat: MTLPixelFormat = .bgra8Unorm
@@ -56,12 +64,13 @@ final public class PointsRender {
         )
     }
 
-    /// Creates a new instance of PointsRenderer.
+    /// Creates a new instance of `PointsRender`.
     ///
     /// - Parameters:
-    ///   - library: Alloy's shader library.
+    ///   - library: Shader library.
     ///   - pixelFormat: Color attachment's pixel format.
-    /// - Throws: Function creation error.
+    ///
+    /// This initializer sets up the render pipeline state and prepares the renderer for rendering points
     public init(
         library: MTLLibrary,
         pixelFormat: MTLPixelFormat = .bgra8Unorm
@@ -76,17 +85,21 @@ final public class PointsRender {
         renderPipelineDescriptor.colorAttachments[0].pixelFormat = pixelFormat
         renderPipelineDescriptor.colorAttachments[0].setup(blending: .alpha)
 
-        self.renderPipelineState = try library.device
-            .makeRenderPipelineState(descriptor: renderPipelineDescriptor)
+        self.renderPipelineState = try library.device.makeRenderPipelineState(
+            descriptor: renderPipelineDescriptor
+        )
     }
 
     // MARK: - Rendering
 
-    /// Render points in a target texture.
+    /// Renders the points using the specified render pass descriptor and command buffer.
     ///
     /// - Parameters:
-    ///   - renderPassDescriptor: Render pass descriptor to be used.
-    ///   - commandBuffer: Command buffer to put the rendering work items into.
+    ///   - renderPassDescriptor: The descriptor for the render pass.
+    ///   - commandBuffer: The command buffer to use for rendering.
+    /// - Throws: An error if rendering fails.
+    ///
+    /// This method sets the render target size and executes the rendering commands.
     public func render(
         renderPassDescriptor: MTLRenderPassDescriptor,
         commandBuffer: MTLCommandBuffer
@@ -101,8 +114,7 @@ final public class PointsRender {
     ///
     /// - Parameter renderEncoder: Container to put the rendering work into.
     public func render(using renderEncoder: MTLRenderCommandEncoder) {
-        guard self.pointCount != 0
-        else { return }
+        guard self.pointCount != 0 else { return }
 
         // Push a debug group allowing us to identify render commands in the GPU Frame Capture tool.
         renderEncoder.pushDebugGroup("Draw Points Geometry")

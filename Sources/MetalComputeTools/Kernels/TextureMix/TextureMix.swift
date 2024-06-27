@@ -1,12 +1,16 @@
 import MetalTools
+import Metal
 import SIMDTools
 import simd
 
+/// A class for performing texture mixing using Metal.
 final public class TextureMix {
 
     // MARK: - Type Definitions
 
+    /// Configuration structure for texture mixing.
     public struct Configuration: Equatable {
+        /// Enum representing the position type.
         public enum Position: Equatable {
             case normalized(SIMD2<Float>),
                  pixel(SIMD2<UInt>)
@@ -14,6 +18,7 @@ final public class TextureMix {
             public static let `default` = Position.normalized(.init(repeating: 0.5))
         }
 
+        /// Enum representing the scale type.
         public enum Scale: Equatable {
             case aspectFill,
                  aspectFit,
@@ -23,10 +28,16 @@ final public class TextureMix {
             public static let `default` = Scale.fill
         }
 
+        /// Structure representing the rotation angles.
         public struct Rotation: Equatable {
             public var x: Angle
             public var y: Angle
 
+            /// Initializes a new instance of `Rotation`.
+            ///
+            /// - Parameters:
+            ///   - rotationX: The rotation angle around the X-axis.
+            ///   - rotationY: The rotation angle around the Y-axis.
             public init(
                 rotationX: Angle,
                 rotationY: Angle
@@ -35,6 +46,9 @@ final public class TextureMix {
                 self.y = rotationY
             }
 
+            /// Initializes a new instance of `Rotation` with the same angle for both axes.
+            ///
+            /// - Parameter angle: The rotation angle for both axes.
             public init(repeating angle: Angle) {
                 self.x = angle
                 self.y = angle
@@ -47,6 +61,14 @@ final public class TextureMix {
         public var scale: Scale
         public var opacity: Float
 
+        /// Initializes a new instance of `Configuration`.
+        ///
+        /// - Parameters:
+        ///   - position: The position type. Defaults to `.default`.
+        ///   - anchorPoint: The anchor point. Defaults to `(0.5, 0.5)`.
+        ///   - rotation: The rotation configuration. Defaults to `.init(repeating: .zero)`.
+        ///   - scale: The scale type. Defaults to `.default`.
+        ///   - opacity: The opacity value. Defaults to `1.0`.
         public init(
             position: Position = .default,
             anchorPoint: SIMD2<Float> = .init(repeating: 0.5),
@@ -71,10 +93,24 @@ final public class TextureMix {
 
     // MARK: - Init
 
+    /// Creates a new instance of `TextureMix`.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This convenience initializer sets up the texture mix operation with the specified context.
     public convenience init(context: MTLContext) throws {
         try self.init(library: context.library(for: .module))
     }
 
+    /// Creates a new instance of `TextureMix` with the specified library.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library to use for the texture mix operation.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This initializer sets up the pipeline state for the texture mix operation.
     public init(library: MTLLibrary) throws {
         self.deviceSupportsNonuniformThreadgroups = library.device.supports(feature: .nonUniformThreadgroups)
         let constantValues = MTLFunctionConstantValues()
@@ -90,6 +126,16 @@ final public class TextureMix {
 
     // MARK: - Encode
 
+    /// Encodes the texture mix operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - sourceOne: The first source texture.
+    ///   - sourceTwo: The second source texture.
+    ///   - destination: The destination texture.
+    ///   - configuration: The configuration for the mix operation. Defaults to `.default`.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the mix operation using the provided textures, configuration, and command buffer.
     public func callAsFunction(
         sourceOne: MTLTexture,
         sourceTwo: MTLTexture,
@@ -106,6 +152,16 @@ final public class TextureMix {
         )
     }
 
+    /// Encodes the texture mix operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - sourceOne: The first source texture.
+    ///   - sourceTwo: The second source texture.
+    ///   - destination: The destination texture.
+    ///   - configuration: The configuration for the mix operation. Defaults to `.default`.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the mix operation using the provided textures, configuration, and command encoder.
     public func callAsFunction(
         sourceOne: MTLTexture,
         sourceTwo: MTLTexture,
@@ -122,6 +178,16 @@ final public class TextureMix {
         )
     }
 
+    /// Encodes the texture mix operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - sourceOne: The first source texture.
+    ///   - sourceTwo: The second source texture.
+    ///   - destination: The destination texture.
+    ///   - configuration: The configuration for the mix operation. Defaults to `.default`.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the mix operation using the provided textures, configuration, and command buffer.
     public func encode(
         sourceOne: MTLTexture,
         sourceTwo: MTLTexture,
@@ -141,6 +207,16 @@ final public class TextureMix {
         }
     }
 
+    /// Encodes the texture mix operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - sourceOne: The first source texture.
+    ///   - sourceTwo: The second source texture.
+    ///   - destination: The destination texture.
+    ///   - configuration: The configuration for the mix operation. Defaults to `.default`.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the mix operation using the provided textures, configuration, and command encoder.
     public func encode(
         sourceOne: MTLTexture,
         sourceTwo: MTLTexture,
@@ -182,12 +258,19 @@ final public class TextureMix {
 
     // MARK: - Private
 
+    /// Computes the transformation matrix for the mix operation based on the provided configuration.
+    ///
+    /// - Parameters:
+    ///   - sourceOneSize: The size of the first source texture.
+    ///   - sourceTwoSize: The size of the second source texture.
+    ///   - configuration: The configuration for the mix operation.
+    /// - Returns: The transformation matrix.
     private func transform(
         sourceOneSize: SIMD2<Float>,
         sourceTwoSize: SIMD2<Float>,
         configuration: Configuration
     ) -> simd_float3x3 {
-        // We assume that anchor point of sourceTwo is it's coordinate system start, like in CALayers,
+        // We assume that the anchor point of sourceTwo is its coordinate system start, like in CALayers,
         // so we don't do pre-translation, only post-translation.
         let preTranslationValue = SIMD2<Float>(
             configuration.anchorPoint.x * sourceTwoSize.x,
@@ -234,5 +317,6 @@ final public class TextureMix {
         return transform.inverse
     }
 
+    /// The name of the Metal function used for texture mixing.
     public static let functionName = "textureMix"
 }

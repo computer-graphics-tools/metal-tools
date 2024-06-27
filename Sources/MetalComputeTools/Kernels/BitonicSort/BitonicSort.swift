@@ -1,5 +1,7 @@
 import MetalTools
+import Metal
 
+/// A class that implements the Bitonic Sort algorithm using Metal.
 final public class BitonicSort {
     // MARK: - Properties
 
@@ -7,8 +9,14 @@ final public class BitonicSort {
     private let generalPass: GeneralPass
     private let finalPass: FinalPass
 
-    // MARK: - Init
+    // MARK: - Initialization
 
+    /// Initializes a new BitonicSort instance using a Metal context.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context to use.
+    ///   - scalarType: The scalar type of the data to be sorted.
+    /// - Throws: An error if initialization fails.
     public convenience init(
         context: MTLContext,
         scalarType: MTLPixelFormat.ScalarType
@@ -19,6 +27,12 @@ final public class BitonicSort {
         )
     }
 
+    /// Initializes a new BitonicSort instance using a Metal library.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library containing the required kernel functions.
+    ///   - scalarType: The scalar type of the data to be sorted.
+    /// - Throws: An error if initialization fails.
     public init(
         library: MTLLibrary,
         scalarType: MTLPixelFormat.ScalarType
@@ -37,20 +51,32 @@ final public class BitonicSort {
         )
     }
 
-    // MARK: - Encode
+    // MARK: - Encoding
 
+    /// Encodes the sorting operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - data: The buffer containing the data to be sorted.
+    ///   - count: The number of elements to sort.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         data: MTLBuffer,
         count: Int,
-        in commandeBuffer: MTLCommandBuffer
+        in commandBuffer: MTLCommandBuffer
     ) {
         self.encode(
             data: data,
             count: count,
-            in: commandeBuffer
+            in: commandBuffer
         )
     }
 
+    /// Encodes the sorting operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - data: The buffer containing the data to be sorted.
+    ///   - count: The number of elements to sort.
+    ///   - commandBuffer: The command buffer to encode into.
     public func encode(
         data: MTLBuffer,
         count: Int,
@@ -117,6 +143,14 @@ final public class BitonicSort {
         )
     }
 
+    /// Creates a Metal buffer from an array of floating-point values, padding if necessary.
+    ///
+    /// - Parameters:
+    ///   - array: The array of floating-point values to create a buffer from.
+    ///   - device: The Metal device to create the buffer on.
+    ///   - options: Resource options for the buffer.
+    /// - Returns: A tuple containing the created buffer and the padded count.
+    /// - Throws: An error if buffer creation fails.
     public static func buffer<T: FloatingPoint>(
         from array: [T],
         device: MTLDevice,
@@ -130,6 +164,7 @@ final public class BitonicSort {
         )
     }
 
+    // Private helper method for buffer creation
     private static func buffer<T: Numeric>(
         from array: [T],
         paddingValue: T,

@@ -1,6 +1,11 @@
 import Metal
 
 public extension MTLBuffer {
+    /// Copies the contents of this buffer to another buffer.
+    ///
+    /// - Parameters:
+    ///   - other: The destination buffer.
+    ///   - offset: The offset in the destination buffer to start copying to (default is 0).
     func copy(
         to other: MTLBuffer,
         offset: Int = 0
@@ -12,6 +17,10 @@ public extension MTLBuffer {
         )
     }
 
+    /// Returns a pointer to the buffer's contents as a specific type.
+    ///
+    /// - Parameter type: The type to interpret the buffer contents as.
+    /// - Returns: An unsafe mutable pointer to the buffer contents, or nil if the buffer is not CPU-accessible.
     func pointer<T>(of type: T.Type) -> UnsafeMutablePointer<T>? {
         guard self.isAccessibleOnCPU
         else { return nil }
@@ -26,6 +35,12 @@ public extension MTLBuffer {
         return bindedPointer
     }
 
+    /// Creates an unsafe buffer pointer to the buffer's contents as a specific type.
+    ///
+    /// - Parameters:
+    ///   - type: The type to interpret the buffer contents as.
+    ///   - count: The number of elements to include in the buffer pointer.
+    /// - Returns: An unsafe buffer pointer to the buffer contents, or nil if the buffer is not CPU-accessible.
     func bufferPointer<T>(
         of type: T.Type,
         count: Int
@@ -39,6 +54,12 @@ public extension MTLBuffer {
         return bufferPointer
     }
 
+    /// Creates an array from the buffer's contents interpreted as a specific type.
+    ///
+    /// - Parameters:
+    ///   - type: The type to interpret the buffer contents as.
+    ///   - count: The number of elements to include in the array.
+    /// - Returns: An array of the specified type, or nil if the buffer is not CPU-accessible.
     func array<T>(
         of type: T.Type,
         count: Int
@@ -52,10 +73,12 @@ public extension MTLBuffer {
         return valueArray
     }
 
-    /// Put a value in `MTLBuffer` at desired offset.
+    /// Puts a single value into the buffer at a specified offset.
+    ///
     /// - Parameters:
-    ///   - value: value to put in the buffer.
-    ///   - offset: offset in bytes.
+    ///   - value: The value to put in the buffer.
+    ///   - offset: The offset in bytes where to put the value (default is 0).
+    /// - Throws: `MetalError.MTLBufferError.incompatibleData` if the buffer doesn't have enough space.
     func put<T>(
         _ value: T,
         at offset: Int = 0
@@ -65,10 +88,12 @@ public extension MTLBuffer {
         (self.contents() + offset).assumingMemoryBound(to: T.self).pointee = value
     }
 
-    /// Put values in `MTLBuffer` at desired offset.
+    /// Puts an array of values into the buffer at a specified offset.
+    ///
     /// - Parameters:
-    ///   - values: values to put in the buffer.
-    ///   - offset: offset in bytes.
+    ///   - values: The array of values to put in the buffer.
+    ///   - offset: The offset in bytes where to start putting the values (default is 0).
+    /// - Throws: `MetalError.MTLBufferError.incompatibleData` if the buffer doesn't have enough space or if the data is incompatible.
     func put<T>(
         _ values: [T],
         at offset: Int = 0

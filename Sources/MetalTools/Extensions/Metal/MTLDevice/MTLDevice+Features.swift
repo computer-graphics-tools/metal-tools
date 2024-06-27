@@ -1,13 +1,22 @@
 import Metal
 
+/// Enum representing various Metal features that may or may not be supported by a device.
 public enum Features {
+    /// Non-uniform threadgroups allow for more flexible compute kernel dispatches.
     case nonUniformThreadgroups
+    /// Tile shaders enable efficient rendering of tiled resources.
     case tileShaders
+    /// Read-write textures allow both reading from and writing to textures in a shader.
     case readWriteTextures(MTLPixelFormat)
+    /// Ability to read and write to cube map textures in Metal functions.
     case readWriteCubeMapTexturesInFunctions
 }
 
 public extension MTLDevice {
+    /// Checks if the device supports a specific Metal feature.
+    ///
+    /// - Parameter feature: The feature to check for support.
+    /// - Returns: A boolean indicating whether the feature is supported.
     func supports(feature: Features) -> Bool {
         switch feature {
         case .nonUniformThreadgroups:
@@ -18,7 +27,8 @@ public extension MTLDevice {
             #elseif os(macOS)
             return supportsFeatureSet(.macOS_GPUFamily1_v3)
             #endif
-        case .tileShaders: return supportsFamily(.apple4)
+        case .tileShaders:
+            return supportsFamily(.apple4)
         case let .readWriteTextures(pixelFormat):
             let tierOneSupportedPixelFormats: Set<MTLPixelFormat> = [
                 .r32Float, .r32Uint, .r32Sint
