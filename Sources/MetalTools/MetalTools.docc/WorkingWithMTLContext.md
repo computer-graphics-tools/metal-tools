@@ -121,7 +121,7 @@ do {
 ``MTLContext/texture(width:height:pixelFormat:options:usage:)``
 ``MTLContext/buffer(for:count:options:)``
 
-##Command Scheduling
+## Command Scheduling
 
 ``MTLContext/scheduleAndWait(_:)``
 ``MTLContext/schedule(_:)``

@@ -13,6 +13,24 @@ MetalTools provides a convenient, Swifty way of working with Metal. This library
 
 ## Usage
 
+Please see [the package's documentation](https://swiftpackageindex.com/computer-graphics-tools/metal-tools/documentation/metaltools)
+for the detailed usage instructions.
+
+### MTLContext
+
+`MTLContext` is a central component of the MetalTools framework, designed to streamline Metal-based operations. It encapsulates an `MTLDevice` and an `MTLCommandQueue`, providing a unified interface for common Metal tasks.
+
+```swift
+import MetalTools
+
+do {
+    let context = try MTLContext()
+    // Use the context for further operations
+} catch {
+    print("Failed to create MTLContext: \(error)")
+}
+```
+
 ### Dispatch command buffers in both sync/async manner
 
 See how you can group encodings with Swift closures.
@@ -29,6 +47,13 @@ self.context.scheduleAndWait { buffer in
 }
 ```
 
+### Set resources to Command Encoder
+
+```swift
+encoder.setTextures(source, destination)
+encoder.setValue(affineTransform, at: 0)
+```
+
 ### Easily create textures from CGImage
 
 ```swift
@@ -38,10 +63,21 @@ let texture = try context.texture(
 )
 ```
 
+### Serialize and deserialize MTLTexture
+
+```swift
+let encoder = JSONEncoder()
+let data = try encoder.encode(texture.codable())
+
+let decoder = JSONDecoder()
+let decodableTexture = try decoder.decode(MTLTextureCodableBox.self, from: data)
+let decodedTexture = try decodableTexture.texture(device: self.context.device)
+```
+
 ### Load a compute pipeline state for a function that sits in a framework
 
 ```swift
-let library = context.shaderLibrary(for: Foo.self)
+let library = context.library(for: Foo.self)
 let computePipelineState = try lib.computePipelineState(function: "brightness")
 ```
 
@@ -55,17 +91,6 @@ let buffer = context.buffer(
 )
 ```
 
-### Serialize and deserialize MTLTexture 
-
-```swift
-let encoder = JSONEncoder()
-let data = try encoder.encode(texture.codable())
-
-let decoder = JSONDecoder()
-let decodableTexture = try decoder.decode(MTLTextureCodableBox.self, from: data)
-let decodedTexture = try decodableTexture.texture(device: self.context.device)
-```
-
 ### Setup blending mode in render passes
 
 ```swift
@@ -75,13 +100,12 @@ renderPipelineDescriptor.colorAttachments[0].setup(blending: .alpha)
 
 ### Other things
 
+- [Ready-to-use compute kernels](Sources/MetalComputeTools/Kernels)
+- [Simple geometry renderers](Sources/MetalRenderingTools/Renderers)
 - Create multi-sample render target pairs
-- Create textures
 - Create depth buffers
-- Create depth/stencil states
-- [Lots of ready-to-use compute kernels](Sources/MetalComputeTools/Kernels)
-- [A couple of simple geometry renderers](Sources/MetalRenderingTools/Renderers)
-- etc.
+- Create depth / stencil states
+- and more!
 
 ## License
 
