@@ -2,6 +2,13 @@ import IOSurface
 import Metal
 
 public extension MTLDevice {
+    /// Creates a Metal library from a file at the given URL.
+    ///
+    /// - Parameters:
+    ///   - file: The URL of the Metal source file.
+    ///   - options: Compile options for the library (optional).
+    /// - Returns: A compiled Metal library.
+    /// - Throws: An error if the library creation fails.
     func library(
         from file: URL,
         options: MTLCompileOptions? = nil
@@ -12,6 +19,15 @@ public extension MTLDevice {
         )
     }
 
+    /// Creates a pair of textures for multisample rendering.
+    ///
+    /// - Parameters:
+    ///   - width: The width of the textures.
+    ///   - height: The height of the textures.
+    ///   - pixelFormat: The pixel format of the textures.
+    ///   - sampleCount: The number of samples for multisampling (default is 4).
+    /// - Returns: A tuple containing the main (multisample) texture and the resolve texture.
+    /// - Throws: An error if texture creation fails.
     func multisampleRenderTargetPair(
         width: Int,
         height: Int,
@@ -45,6 +61,14 @@ public extension MTLDevice {
         return (main: sampleTex, resolve: mainTex)
     }
 
+    /// Creates a Metal heap with the specified size and storage mode.
+    ///
+    /// - Parameters:
+    ///   - size: The size of the heap in bytes.
+    ///   - storageMode: The storage mode for the heap.
+    ///   - cpuCacheMode: The CPU cache mode for the heap (default is .defaultCache).
+    /// - Returns: A new Metal heap.
+    /// - Throws: An error if heap creation fails.
     func heap(
         size: Int,
         storageMode: MTLStorageMode,
@@ -60,6 +84,14 @@ public extension MTLDevice {
         return heap
     }
 
+    /// Creates a Metal buffer for a specific type.
+    ///
+    /// - Parameters:
+    ///   - _: The type of elements the buffer will hold.
+    ///   - count: The number of elements (default is 1).
+    ///   - options: Resource options for the buffer (default is .cpuCacheModeWriteCombined).
+    /// - Returns: A new Metal buffer.
+    /// - Throws: An error if buffer creation fails.
     func buffer<T>(
         for _: T.Type,
         count: Int = 1,
@@ -73,6 +105,13 @@ public extension MTLDevice {
         return buffer
     }
 
+    /// Creates a Metal buffer containing a single value.
+    ///
+    /// - Parameters:
+    ///   - value: The value to store in the buffer.
+    ///   - options: Resource options for the buffer (default is .cpuCacheModeWriteCombined).
+    /// - Returns: A new Metal buffer containing the value.
+    /// - Throws: An error if buffer creation fails.
     func buffer<T>(
         with value: T,
         options: MTLResourceOptions = .cpuCacheModeWriteCombined
@@ -88,6 +127,13 @@ public extension MTLDevice {
         return buffer
     }
 
+    /// Creates a Metal buffer containing an array of values.
+    ///
+    /// - Parameters:
+    ///   - values: The array of values to store in the buffer.
+    ///   - options: Resource options for the buffer (default is .cpuCacheModeWriteCombined).
+    /// - Returns: A new Metal buffer containing the values.
+    /// - Throws: An error if buffer creation fails.
     func buffer<T>(
         with values: [T],
         options: MTLResourceOptions = .cpuCacheModeWriteCombined
@@ -105,6 +151,15 @@ public extension MTLDevice {
         return buffer
     }
 
+    /// Creates a depth buffer texture.
+    ///
+    /// - Parameters:
+    ///   - width: The width of the texture.
+    ///   - height: The height of the texture.
+    ///   - usage: The usage of the texture (default is empty).
+    ///   - storageMode: The storage mode of the texture (default is platform-specific).
+    /// - Returns: A new depth buffer texture.
+    /// - Throws: An error if texture creation fails.
     func depthBuffer(
         width: Int,
         height: Int,
@@ -126,6 +181,13 @@ public extension MTLDevice {
         return texture
     }
 
+    /// Creates a depth stencil state.
+    ///
+    /// - Parameters:
+    ///   - depthCompareFunction: The depth comparison function to use.
+    ///   - isDepthWriteEnabled: Whether depth writing is enabled (default is true).
+    /// - Returns: A new depth stencil state.
+    /// - Throws: An error if depth stencil state creation fails.
     func depthState(
         depthCompareFunction: MTLCompareFunction,
         isDepthWriteEnabled: Bool = true
@@ -138,6 +200,16 @@ public extension MTLDevice {
         return depthStencilState
     }
 
+    /// Creates a texture with the specified parameters.
+    ///
+    /// - Parameters:
+    ///   - width: The width of the texture.
+    ///   - height: The height of the texture.
+    ///   - pixelFormat: The pixel format of the texture.
+    ///   - options: Resource options for the texture (default is empty).
+    ///   - usage: The usage of the texture (default is empty).
+    /// - Returns: A new texture.
+    /// - Throws: An error if texture creation fails.
     func texture(
         width: Int,
         height: Int,
@@ -156,6 +228,15 @@ public extension MTLDevice {
         return texture
     }
 
+    /// Creates a texture from an IOSurface.
+    ///
+    /// - Parameters:
+    ///   - iosurface: The IOSurface to create the texture from.
+    ///   - plane: The plane of the IOSurface to use (default is 0).
+    ///   - options: Resource options for the texture (default is empty).
+    ///   - usage: The usage of the texture (default is empty).
+    /// - Returns: A new texture created from the IOSurface.
+    /// - Throws: An error if texture creation fails.
     func texture(
         iosurface: IOSurfaceRef,
         plane: Int = 0,
@@ -179,6 +260,10 @@ public extension MTLDevice {
         return texture
     }
 
+    /// Calculates the maximum texture size that can be supported by the device.
+    ///
+    /// - Parameter desiredSize: The desired size of the texture.
+    /// - Returns: The maximum supported size, maintaining the aspect ratio of the desired size.
     func maxTextureSize(desiredSize: MTLSize) -> MTLSize {
         let maxSide: Int
         if self.supportsOnly8K() {
@@ -202,7 +287,8 @@ public extension MTLDevice {
             return MTLSize(width: Int(resultWidth.rounded()), height: resultHeight, depth: 0)
         }
     }
-
+    
+    // Private helper method
     private func supportsOnly8K() -> Bool {
         #if targetEnvironment(macCatalyst)
         return !supportsFamily(.apple3)

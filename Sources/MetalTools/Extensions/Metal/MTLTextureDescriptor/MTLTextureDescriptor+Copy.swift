@@ -2,6 +2,13 @@ import Foundation
 import Metal
 
 public extension MTLTextureDescriptor {
+
+    /// Creates a deep copy of the MTLTextureDescriptor.
+    ///
+    /// - Returns: A new MTLTextureDescriptor instance that is a deep copy of the original.
+    ///
+    /// This method creates a new `MTLTextureDescriptor` and copies all the properties
+    /// from the current instance, including those available in later iOS and macOS versions.
     func deepCopy() -> MTLTextureDescriptor {
         let copy = MTLTextureDescriptor()
         copy.pixelFormat = self.pixelFormat

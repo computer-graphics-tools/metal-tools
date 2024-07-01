@@ -1,28 +1,58 @@
 import MetalTools
+import CoreGraphics
+import CoreImage
 
+/// A class for rendering lines using Metal.
 final public class LinesRender {
+
+    /// A descriptor for the geometry of a line.
     final public class GeometryDescriptor {
+        /// The start point of the line.
         public let startPoint: SIMD2<Float>
+
+        /// The end point of the line.
         public let endPoint: SIMD2<Float>
-        public let noramlizedWidth: Float
+
+        /// The normalized width of the line.
+        public let normalizedWidth: Float
+
+        /// The color of the line.
         public let color: SIMD4<Float>
 
+        /// Initializes a new `GeometryDescriptor` with the specified parameters.
+        ///
+        /// - Parameters:
+        ///   - startPoint: The start point of the line.
+        ///   - endPoint: The end point of the line.
+        ///   - normalizedWidth: The normalized width of the line.
+        ///   - color: The color of the line.
+        ///
+        /// This initializer sets the start point, end point, normalized width, and color for the `GeometryDescriptor`.
         public init(
             startPoint: SIMD2<Float>,
             endPoint: SIMD2<Float>,
-            noramlizedWidth: Float,
+            normalizedWidth: Float,
             color: SIMD4<Float>
         ) {
             self.startPoint = startPoint
             self.endPoint = endPoint
-            self.noramlizedWidth = noramlizedWidth
+            self.normalizedWidth = normalizedWidth
             self.color = color
         }
 
+        /// Convenience initializer for creating a `GeometryDescriptor` from `CGPoint` and `CGColor`.
+        ///
+        /// - Parameters:
+        ///   - startPoint: The start point of the line as a `CGPoint`.
+        ///   - endPoint: The end point of the line as a `CGPoint`.
+        ///   - normalizedWidth: The normalized width of the line as a `CGFloat`.
+        ///   - color: The color of the line as a `CGColor`.
+        ///
+        /// This initializer converts the `CGPoint` and `CGColor` to the appropriate formats and initializes the `GeometryDescriptor`.
         public convenience init(
             startPoint: CGPoint,
             endPoint: CGPoint,
-            noramlizedWidth: CGFloat,
+            normalizedWidth: CGFloat,
             color: CGColor
         ) {
             let startPoint = SIMD2<Float>(
@@ -33,7 +63,7 @@ final public class LinesRender {
                 .init(endPoint.x),
                 .init(endPoint.y)
             )
-            let noramlizedWidth = Float(noramlizedWidth)
+            let noramlizedWidth = Float(normalizedWidth)
             let ciColor = CIColor(cgColor: color)
             let color = SIMD4<Float>(
                 .init(ciColor.red),
@@ -44,7 +74,7 @@ final public class LinesRender {
             self.init(
                 startPoint: startPoint,
                 endPoint: endPoint,
-                noramlizedWidth: noramlizedWidth,
+                normalizedWidth: noramlizedWidth,
                 color: color
             )
         }
@@ -52,20 +82,23 @@ final public class LinesRender {
 
     // MARK: - Properties
 
+    /// The array of geometry descriptors for the lines.
     public var geometryDescriptors: [GeometryDescriptor] = [] {
         didSet { self.updateGeometry() }
     }
 
+    /// The array of lines to be rendered.
     private var lines: [Line] = []
 
+    /// The render pipeline state for rendering lines.
     private let renderPipelineState: MTLRenderPipelineState
 
     // MARK: - Life Cycle
 
-    /// Creates a new instance of LinesRenderer.
+    /// Creates a new instance of `LinesRender`.
     ///
     /// - Parameters:
-    ///   - context: Alloy's Metal context.
+    ///   - context: The Metal context.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Library or function creation errors.
     public convenience init(
@@ -81,7 +114,7 @@ final public class LinesRender {
     /// Creates a new instance of LinesRenderer.
     ///
     /// - Parameters:
-    ///   - library: Alloy's shader library.
+    ///   - library: Shader library.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Function creation error.
     public init(
@@ -107,7 +140,7 @@ final public class LinesRender {
             .init(
                 startPoint: descriptor.startPoint,
                 endPoint: descriptor.endPoint,
-                width: descriptor.noramlizedWidth
+                width: descriptor.normalizedWidth
             )
         }
     }
@@ -133,15 +166,13 @@ final public class LinesRender {
     ///
     /// - Parameter renderEncoder: Container to put the rendering work into.
     public func render(using renderEncoder: MTLRenderCommandEncoder) {
-        guard !self.lines.isEmpty
-        else { return }
+        guard !self.lines.isEmpty else { return }
 
         #if DEBUG
         renderEncoder.pushDebugGroup("Draw Line Geometry")
         #endif
         self.lines.enumerated().forEach { index, line in
-            let color = self.geometryDescriptors[index]
-                .color
+            let color = self.geometryDescriptors[index].color
             renderEncoder.setRenderPipelineState(self.renderPipelineState)
             renderEncoder.set(
                 vertexValue: line,

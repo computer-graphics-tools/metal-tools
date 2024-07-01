@@ -1,2 +1,2 @@
-@_exported import MetalRenderingToolsSharedTypes
-@_exported import MetalTools
+@_documentation(visibility: internal) @_exported import MetalRenderingToolsSharedTypes
+@_documentation(visibility: internal) @_exported import MetalTools

@@ -1,18 +1,30 @@
 import MetalTools
 import simd
 
+/// A class that performs affine cropping on textures using Metal.
 final public class TextureAffineCrop {
-    // MARK: - Propertires
+    // MARK: - Properties
 
+    /// The compute pipeline state used for the affine crop operation.
     public let pipelineState: MTLComputePipelineState
+
+    /// Indicates whether the device supports non-uniform threadgroups.
     private let deviceSupportsNonuniformThreadgroups: Bool
 
     // MARK: - Life Cycle
 
+    /// Initializes a new instance of `TextureAffineCrop` using a Metal context.
+    ///
+    /// - Parameter context: The Metal context to use.
+    /// - Throws: An error if the initialization fails.
     public convenience init(context: MTLContext) throws {
         try self.init(library: context.library(for: .module))
     }
 
+    /// Initializes a new instance of `TextureAffineCrop` using a Metal library.
+    ///
+    /// - Parameter library: The Metal library containing the kernel functions.
+    /// - Throws: An error if the initialization fails.
     public init(library: MTLLibrary) throws {
         let functionName = Self.functionName
         self.deviceSupportsNonuniformThreadgroups = library.device.supports(feature: .nonUniformThreadgroups)
@@ -29,6 +41,13 @@ final public class TextureAffineCrop {
 
     // MARK: - Encode
 
+    /// Encodes the affine crop operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - affineTransform: The 3x3 affine transformation matrix.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -43,6 +62,13 @@ final public class TextureAffineCrop {
         )
     }
 
+    /// Encodes the affine crop operation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - affineTransform: The 3x3 affine transformation matrix.
+    ///   - encoder: The compute command encoder to use.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -57,6 +83,13 @@ final public class TextureAffineCrop {
         )
     }
 
+    /// Encodes the affine crop operation into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - affineTransform: The 3x3 affine transformation matrix.
+    ///   - commandBuffer: The command buffer to encode into.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,
@@ -74,6 +107,13 @@ final public class TextureAffineCrop {
         }
     }
 
+    /// Encodes the affine crop operation using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - affineTransform: The 3x3 affine transformation matrix.
+    ///   - encoder: The compute command encoder to use.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,
@@ -96,5 +136,6 @@ final public class TextureAffineCrop {
         }
     }
 
+    /// The name of the Metal kernel function used for affine cropping.
     public static let functionName = "textureAffineCrop"
 }

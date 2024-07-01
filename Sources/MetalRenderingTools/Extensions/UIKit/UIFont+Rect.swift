@@ -2,13 +2,21 @@
 
 import UIKit
 
+/// Extension for `UIFont` to provide additional functionality related to text rendering and measurement.
 extension UIFont {
+
+    /// The estimated width of a single line of text with this font.
+    ///
+    /// This property calculates the estimated width of a single line of text using the "!" character.
     var estimatedLineWidth: CGFloat {
         let string: NSString = "!"
         let stringSize = string.size(withAttributes: [NSAttributedString.Key.font : self])
         return .init(ceilf(.init(stringSize.width)))
     }
 
+    /// The estimated size of a glyph with this font.
+    ///
+    /// This property calculates the estimated size of a glyph using a sample string of characters.
     var estimatedGlyphSize: CGSize {
         let string: NSString = "{ǺOJMQYZa@jmqyw"
         let stringSize = string.size(withAttributes: [NSAttributedString.Key.font : self])
@@ -20,6 +28,9 @@ extension UIFont {
         )
     }
 
+    /// The Core Text font representation of this font.
+    ///
+    /// This property provides a `CTFont` representation of the `UIFont`.
     var ctFont: CTFont {
         CTFontCreateWithName(
             self.fontName as CFString,
@@ -28,6 +39,15 @@ extension UIFont {
         )
     }
 
+    /// Determines if a string with a specified font fits within a given rectangle.
+    ///
+    /// - Parameters:
+    ///   - font: The font to use for the string.
+    ///   - rect: The rectangle to fit the string into.
+    ///   - characterCount: The number of characters to fit within the rectangle.
+    /// - Returns: `true` if the string fits within the rectangle, otherwise `false`.
+    ///
+    /// This method checks if the given string with the specified font fits within the provided rectangle.
     private static func stringWithFontFitsInRect(
         font: UIFont,
         rect: CGRect,
@@ -41,7 +61,16 @@ extension UIFont {
             * .init(characterCount)
         return estimatedGlyphTotalArea < area
     }
-
+    
+    /// Calculates the font size to fit within an atlas rectangle and returns the appropriate `UIFont` object.
+    ///
+    /// - Parameters:
+    ///   - fontName: The name of the font.
+    ///   - atlasRect: The rectangle defining the bounds of the atlas.
+    ///   - trialFontSize: The initial font size to try for fitting. Defaults to 32.
+    /// - Returns: The `UIFont` object with the calculated size that fits within the atlas rectangle, or `nil` if the font cannot be created.
+    ///
+    /// This method creates a temporary font to estimate the glyph count, then calculates the font size that fits within the specified atlas rectangle, and returns the corresponding `UIFont` object.
     public static func atlasFont(
         name fontName: String,
         atlasRect: CGRect,
@@ -66,7 +95,16 @@ extension UIFont {
         )
     }
 
-    public static func calculateFontSizeToFit(
+    /// Calculates the font size that fits within a specified rectangle.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle to fit the font size into.
+    ///   - fontName: The name of the font.
+    ///   - characterCount: The number of characters to fit within the rectangle.
+    /// - Returns: The calculated font size.
+    ///
+    /// This method calculates the font size that will fit within the specified rectangle for a given character count.
+    static func calculateFontSizeToFit(
         rect: CGRect,
         fontName: String,
         characterCount: Int,

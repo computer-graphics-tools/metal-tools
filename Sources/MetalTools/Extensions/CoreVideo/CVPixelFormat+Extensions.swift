@@ -2,6 +2,12 @@ import CoreVideo
 import Metal
 
 public extension OSType {
+    /// Provides the compatible Metal pixel format for a given Core Video pixel format.
+    ///
+    /// This property maps Core Video pixel format types to their corresponding Metal pixel formats.
+    /// If there is no direct correspondence, it returns nil.
+    ///
+    /// - Returns: The corresponding MTLPixelFormat, or nil if no compatible format exists.
     var compatibleMTLPixelFormat: MTLPixelFormat? {
         switch self {
         case kCVPixelFormatType_OneComponent8: return .r8Unorm

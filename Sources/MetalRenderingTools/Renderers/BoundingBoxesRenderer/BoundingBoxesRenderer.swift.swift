@@ -1,14 +1,36 @@
 #if os(iOS) || targetEnvironment(macCatalyst)
 
 import Metal
+import CoreGraphics
+import CoreImage
+import UIKit
 
+/// A class for rendering bounding boxes using Metal.
 final public class BoundingBoxesRender {
+
+    /// A descriptor for the geometry of a bounding box.
     final public class GeometryDescriptor {
+        /// The color of the bounding box.
         public let color: SIMD4<Float>
+
+        /// The normalized line width of the bounding box.
         public let normalizedLineWidth: Float
+
+        /// The normalized rectangle defining the bounding box.
         public let normalizedRect: SIMD4<Float>
+
+        /// The descriptor for the label associated with the bounding box.
         public let labelDescriptor: LabelsRender.GeometryDescriptor?
 
+        /// Initializes a new `GeometryDescriptor` with the specified parameters.
+        ///
+        /// - Parameters:
+        ///   - color: The color of the bounding box.
+        ///   - normalizedLineWidth: The normalized line width of the bounding box.
+        ///   - normalizedRect: The normalized rectangle defining the bounding box.
+        ///   - labelDescriptor: The descriptor for the label associated with the bounding box.
+        ///
+        /// This initializer sets the color, line width, rectangle, and label descriptor for the `GeometryDescriptor`.
         public init(
             color: SIMD4<Float>,
             normalizedLineWidth: Float,
@@ -21,6 +43,15 @@ final public class BoundingBoxesRender {
             self.labelDescriptor = labelDescriptor
         }
 
+        /// Convenience initializer for creating a `GeometryDescriptor` from a `CGColor` and `CGRect`.
+        ///
+        /// - Parameters:
+        ///   - color: The color of the bounding box as a `CGColor`.
+        ///   - normalizedLineWidth: The normalized line width of the bounding box.
+        ///   - normalizedRect: The normalized rectangle defining the bounding box as a `CGRect`.
+        ///   - labelDescriptor: The descriptor for the label associated with the bounding box.
+        ///
+        /// This initializer converts the `CGColor` and `CGRect` to the appropriate formats and initializes the `GeometryDescriptor`.
         public convenience init(
             color: CGColor,
             normalizedLineWidth: Float,
@@ -48,6 +79,15 @@ final public class BoundingBoxesRender {
             )
         }
 
+        /// Convenience initializer for creating a `GeometryDescriptor` with a label text.
+        ///
+        /// - Parameters:
+        ///   - color: The color of the bounding box as a `CGColor`.
+        ///   - normalizedLineWidth: The normalized line width of the bounding box.
+        ///   - normalizedRect: The normalized rectangle defining the bounding box as a `CGRect`.
+        ///   - labelText: The text for the label associated with the bounding box.
+        ///
+        /// This initializer converts the `CGColor` and `CGRect` to the appropriate formats and initializes the `GeometryDescriptor` with a label text.
         public convenience init(
             color: CGColor,
             normalizedLineWidth: Float,
@@ -82,7 +122,8 @@ final public class BoundingBoxesRender {
     }
 
     // MARK: - Properties
-
+    
+    /// The array of geometry descriptors for the bounding boxes.
     public var geometryDescriptors: [GeometryDescriptor] = [] {
         didSet {
             self.labelsRender.geometryDescriptors = self.geometryDescriptors.compactMap(\.labelDescriptor)
@@ -90,7 +131,8 @@ final public class BoundingBoxesRender {
             self.drawLables = !self.geometryDescriptors.compactMap(\.labelDescriptor).isEmpty
         }
     }
-
+    
+    /// Render target size.
     public var renderTargetSize: MTLSize = .zero {
         didSet {
             self.labelsRender.renderTargetSize = self.renderTargetSize
@@ -107,7 +149,7 @@ final public class BoundingBoxesRender {
     /// Creates a new instance of BoundingBoxesRenderer.
     ///
     /// - Parameters:
-    ///   - context: Alloy's Metal context.
+    ///   - context: The Metal context.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Library or function creation errors.
     public convenience init(
@@ -125,7 +167,7 @@ final public class BoundingBoxesRender {
     /// Creates a new instance of BoundingBoxesRenderer.
     ///
     /// - Parameters:
-    ///   - library: Alloy's shader library.
+    ///   - library: Shader library.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Function creation error.
     public init(
@@ -206,7 +248,7 @@ final public class BoundingBoxesRender {
                 linesGeometryDescriptors.append(.init(
                     startPoint: startPoints[i],
                     endPoint: endPoints[i],
-                    noramlizedWidth: widths[i],
+                    normalizedWidth: widths[i],
                     color: descriptor.color
                 ))
             }

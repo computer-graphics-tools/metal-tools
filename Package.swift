@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.9
 
 import PackageDescription
 
@@ -25,8 +25,8 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/SwiftGFX/SwiftMath.git",
-            .upToNextMajor(from: "3.3.1")
+            url: "https://github.com/computer-graphics-tools/simd-tools.git",
+            .upToNextMinor(from: "0.0.1")
         )
     ],
     targets: [
@@ -40,10 +40,7 @@ let package = Package(
             dependencies: [
                 .target(name: "MetalComputeToolsSharedTypes"),
                 .target(name: "MetalTools"),
-                .product(
-                    name: "SwiftMath",
-                    package: "SwiftMath"
-                )
+                .product(name: "SIMDTools", package: "simd-tools")
             ],
             resources: [
                 .process("Kernels/BitonicSort/BitonicSort.metal"),

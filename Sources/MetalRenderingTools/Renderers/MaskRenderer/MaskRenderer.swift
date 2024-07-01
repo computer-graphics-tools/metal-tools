@@ -1,26 +1,32 @@
 import MetalTools
 import simd
 
+/// A class for rendering masks using Metal.
 public class MaskRenderer {
     // MARK: - Properties
 
-    /// Mask color. Red in default.
+    /// Mask color. Red by default.
     public var color: SIMD4<Float> = .init(1, 0, 0, 0.3)
-    /// Texture containig mask information.
+
+    /// Texture containing mask information.
     public var maskTexture: MTLTexture? = nil
-    /// Rectrangle described in a normalized coodrinate system.
+
+    /// Rectangle described in a normalized coordinate system.
     public var normalizedRect: CGRect = .zero
 
+    /// The render pipeline state for rendering masks.
     private let renderPipelineState: MTLRenderPipelineState
 
     // MARK: - Life Cycle
 
-    /// Creates a new instance of MaskRenderer.
+    /// Creates a new instance of `MaskRenderer`.
     ///
     /// - Parameters:
-    ///   - context: Alloy's Metal context.
+    ///   - context: The Metal context.
     ///   - pixelFormat: Color attachment's pixel format.
     /// - Throws: Library or function creation errors.
+    ///
+    /// This initializer sets up the mask renderer with the specified context and pixel format.
     public convenience init(
         context: MTLContext,
         pixelFormat: MTLPixelFormat = .bgra8Unorm
@@ -31,27 +37,23 @@ public class MaskRenderer {
         )
     }
 
-    /// Creates a new instance of MaskRenderer.
+    /// Creates a new instance of `MaskRenderer` with the specified library and pixel format.
     ///
     /// - Parameters:
-    ///   - library: Alloy's shader library.
+    ///   - library: The Metal library to use for rendering.
     ///   - pixelFormat: Color attachment's pixel format.
-    /// - Throws: Function creation error.
+    /// - Throws: Library or function creation errors.
+    ///
+    /// This initializer sets up the render pipeline state for the `MaskRenderer`.
     public init(
         library: MTLLibrary,
-        pixelFormat: MTLPixelFormat = .bgra8Unorm
+        pixelFormat: MTLPixelFormat
     ) throws {
-        guard let vertexFunction = library.makeFunction(name: Self.vertexFunctionName),
-              let fragmentFunction = library.makeFunction(name: Self.fragmentFunctionName)
-        else { throw MetalError.MTLLibraryError.functionCreationFailed }
-
-        let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-        renderPipelineDescriptor.vertexFunction = vertexFunction
-        renderPipelineDescriptor.fragmentFunction = fragmentFunction
-        renderPipelineDescriptor.colorAttachments[0].pixelFormat = pixelFormat
-        renderPipelineDescriptor.colorAttachments[0].setup(blending: .alpha)
-
-        self.renderPipelineState = try library.device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = library.makeFunction(name: "vertex_main")
+        pipelineDescriptor.fragmentFunction = library.makeFunction(name: "fragment_main")
+        pipelineDescriptor.colorAttachments[0].pixelFormat = pixelFormat
+        self.renderPipelineState = try library.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 
     // MARK: - Helpers
@@ -83,11 +85,14 @@ public class MaskRenderer {
 
     // MARK: - Rendering
 
-    /// Render a rectangle with mask in a target texture.
+    /// Renders the mask using the specified render pass descriptor and command buffer.
     ///
     /// - Parameters:
-    ///   - renderPassDescriptor: Render pass descriptor to be used.
-    ///   - commandBuffer: Command buffer to put the rendering work items into.
+    ///   - renderPassDescriptor: The descriptor for the render pass.
+    ///   - commandBuffer: The command buffer to use for rendering.
+    /// - Throws: An error if rendering fails.
+    ///
+    /// This method sets the render target size and executes the rendering commands.
     public func render(
         renderPassDescriptor: MTLRenderPassDescriptor,
         commandBuffer: MTLCommandBuffer

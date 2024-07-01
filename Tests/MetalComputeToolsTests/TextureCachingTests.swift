@@ -38,7 +38,7 @@ final class TextureCachingTests: XCTestCase {
 
     // MARK: - Testing
 
-    func testTextureCaching() throws {
+    func testTextureCaching() async throws {
         let normalizedPixelFormats: [MTLPixelFormat] = [
             .rgba8Unorm, .rgba16Unorm, .rgba16Float, .rgba32Float
         ]
@@ -48,15 +48,19 @@ final class TextureCachingTests: XCTestCase {
 
         var results: [Float] = []
 
-        try normalizedPixelFormats.forEach { results += try self.test(pixelFormat: $0) }
-        try unsignedIntegerPixelFormats.forEach { results += try self.test(pixelFormat: $0) }
+        for pixelFormat in normalizedPixelFormats {
+            results += try await self.test(pixelFormat: pixelFormat)
+        }
+        for pixelFormat in unsignedIntegerPixelFormats {
+            results += try await self.test(pixelFormat: pixelFormat)
+        }
 
         let result = results.reduce(0, +)
 
         XCTAssert(result == 0)
     }
 
-    private func test(pixelFormat: MTLPixelFormat) throws -> [Float] {
+    private func test(pixelFormat: MTLPixelFormat) async throws -> [Float] {
         let euclideanDistance: EuclideanDistance
 
         switch pixelFormat.dataFormat {
@@ -75,25 +79,30 @@ final class TextureCachingTests: XCTestCase {
             options: .storageModeShared
         )
 
-        let originalTextures: [MTLTexture] = try ["255x121", "512x512", "1024x1024"].map {
-            let originalTextureURL = Bundle.metalComputeToolsTestsResources.url(
-                forResource: "Shared/\($0)",
-                withExtension: "png"
-            )!
-            return try self.context.scheduleAndWait { commadBuffer in
-                let cgImage = try CGImage.initFromURL(originalTextureURL)
-                return try self.textureFromCGImage(
-                    cgImage,
-                    pixelFormat: pixelFormat,
-                    generateMipmaps: false,
-                    in: commadBuffer
-                )
+        let originalTextures: [MTLTexture] = try await withThrowingTaskGroup(of: MTLTexture.self) { group in
+            for name in ["255x121", "512x512", "1024x1024"] {
+                group.addTask {
+                    let originalTextureURL = Bundle.metalComputeToolsTestsResources.url(
+                        forResource: "Shared/\(name)",
+                        withExtension: "png"
+                    )!
+                    return try await self.context.scheduleAsync { commadBuffer in
+                        let cgImage = try CGImage.initFromURL(originalTextureURL)
+                        return try self.textureFromCGImage(
+                            cgImage,
+                            pixelFormat: pixelFormat,
+                            generateMipmaps: false,
+                            in: commadBuffer
+                        )
+                    }
+                }
             }
+            return try await group.reduce(into: []) { $0.append($1) }
         }
 
         var results: [Float] = []
 
-        try originalTextures.forEach { original in
+        for original in originalTextures {
             let originalTextureCodableBox = try original.codable()
             let encodedData = try jsonEncoder.encode(originalTextureCodableBox)
 
@@ -103,7 +112,7 @@ final class TextureCachingTests: XCTestCase {
             )
             let decoded = try decodedTextureCodableBox.texture(device: self.context.device)
 
-            try self.context.scheduleAndWait { commadBuffer in
+            try await self.context.scheduleAsync { commadBuffer in
                 if original.mipmapLevelCount > 1 {
                     var level: Int = 0
                     var width = original.width

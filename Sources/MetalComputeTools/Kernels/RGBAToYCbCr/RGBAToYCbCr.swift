@@ -1,13 +1,23 @@
 import MetalTools
 
+/// A class that converts RGBA textures to YCbCr format using Metal.
 final public class RGBAToYCbCr {
     // MARK: - Properties
 
+    /// The compute pipeline state used for the RGBA to YCbCr conversion.
     public let pipelineState: MTLComputePipelineState
+
+    /// Indicates whether the device supports non-uniform threadgroups.
     private let deviceSupportsNonuniformThreadgroups: Bool
 
     // MARK: - Life Cycle
 
+    /// Initializes a new instance of `RGBAToYCbCr` using a Metal context.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context to use.
+    ///   - halfSizedCbCr: Whether to use half-sized chroma components. Defaults to true.
+    /// - Throws: An error if the initialization fails.
     public convenience init(
         context: MTLContext,
         halfSizedCbCr: Bool = true
@@ -18,6 +28,12 @@ final public class RGBAToYCbCr {
         )
     }
 
+    /// Initializes a new instance of `RGBAToYCbCr` using a Metal library.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library containing the kernel functions.
+    ///   - halfSizedCbCr: Whether to use half-sized chroma components. Defaults to true.
+    /// - Throws: An error if the initialization fails.
     public init(
         library: MTLLibrary,
         halfSizedCbCr: Bool = true
@@ -40,6 +56,13 @@ final public class RGBAToYCbCr {
 
     // MARK: - Encode
 
+    /// Encodes the RGBA to YCbCr conversion into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - sourceRGBA: The source RGBA texture.
+    ///   - destinationY: The destination texture for the Y component.
+    ///   - destinationCbCr: The destination texture for the CbCr components.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         sourceRGBA: MTLTexture,
         destinationY: MTLTexture,
@@ -54,6 +77,13 @@ final public class RGBAToYCbCr {
         )
     }
 
+    /// Encodes the RGBA to YCbCr conversion using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - sourceRGBA: The source RGBA texture.
+    ///   - destinationY: The destination texture for the Y component.
+    ///   - destinationCbCr: The destination texture for the CbCr components.
+    ///   - encoder: The compute command encoder to use.
     public func callAsFunction(
         sourceRGBA: MTLTexture,
         destinationY: MTLTexture,
@@ -68,6 +98,13 @@ final public class RGBAToYCbCr {
         )
     }
 
+    /// Encodes the RGBA to YCbCr conversion into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - sourceRGBA: The source RGBA texture.
+    ///   - destinationY: The destination texture for the Y component.
+    ///   - destinationCbCr: The destination texture for the CbCr components.
+    ///   - commandBuffer: The command buffer to encode into.
     public func encode(
         sourceRGBA: MTLTexture,
         destinationY: MTLTexture,
@@ -85,6 +122,13 @@ final public class RGBAToYCbCr {
         }
     }
 
+    /// Encodes the RGBA to YCbCr conversion using a compute command encoder.
+    ///
+    /// - Parameters:
+    ///   - sourceRGBA: The source RGBA texture.
+    ///   - destinationY: The destination texture for the Y component.
+    ///   - destinationCbCr: The destination texture for the CbCr components.
+    ///   - encoder: The compute command encoder to use.
     private func encode(
         sourceRGBA: MTLTexture,
         destinationY: MTLTexture,
@@ -115,5 +159,6 @@ final public class RGBAToYCbCr {
         }
     }
 
+    /// The name of the Metal kernel function used for RGBA to YCbCr conversion.
     public static let functionName = "rgbaToYCbCr"
 }

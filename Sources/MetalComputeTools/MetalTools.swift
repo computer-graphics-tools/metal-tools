@@ -1,1 +1,1 @@
-@_exported import MetalTools
+@_documentation(visibility: internal) @_exported import MetalTools

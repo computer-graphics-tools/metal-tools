@@ -4,26 +4,36 @@ import MetalComputeTools
 import MetalPerformanceShaders
 import UIKit
 
+/// A provider for creating and managing Metal font atlases.
 final public class MTLFontAtlasProvider {
+    /// Errors that can occur when creating a font atlas.
     public enum Error: Swift.Error {
+        /// The error for a failed font creation.
         case fontCreationFailed
     }
 
     // MARK: - Properties
 
+    /// The Metal context associated with this provider.
     public let context: MTLContext
 
+    /// The quantize distance field used for processing.
     private let quantizeDistanceField: QuantizeDistanceField
+
+    /// The size of the source font atlas.
     private let sourceFontAtlasSize = 4096
+
+    /// A cache for storing font atlases.
     private var atlasCache: [MTLFontAtlasDescriptor: MTLFontAtlas] = [:]
 
     // MARK: - Init
 
-    /// Create a signed-distance field based font atlas with the specified dimensions.
-    /// The supplied font will be resized to fit all available glyphs in the texture.
-    /// - Parameters:
-    ///   - font: font.
-    ///   - textureSize: texture size.
+    /// Initializes a new MTLFontAtlasProvider with the specified Metal context.
+    ///
+    /// - Parameter context: The Metal context to use for creating font atlases.
+    /// - Throws: An error if the quantize distance field initialization fails.
+    ///
+    /// This initializer sets the context and initializes the quantize distance field.
     public init(context: MTLContext) throws {
         self.context = context
         self.quantizeDistanceField = try! .init(context: context)
@@ -35,8 +45,13 @@ final public class MTLFontAtlasProvider {
         self.atlasCache[Self.defaultAtlasDescriptor] = defaultAtlas
     }
 
-    /// Provide font atlas
-    /// - Parameter descriptor: font atlas descriptor.
+    /// Provides a font atlas for the specified descriptor.
+    ///
+    /// - Parameter descriptor: The descriptor for the font atlas.
+    /// - Returns: The created `MTLFontAtlas`.
+    /// - Throws: An error if the font atlas creation fails.
+    ///
+    /// This method retrieves a font atlas from the cache or creates a new one if it doesn't exist.
     public func fontAtlas(descriptor: MTLFontAtlasDescriptor) throws -> MTLFontAtlas {
         if self.atlasCache[descriptor] == nil {
             self.atlasCache[descriptor] = try self.createAtlas(descriptor: descriptor)
@@ -44,6 +59,15 @@ final public class MTLFontAtlasProvider {
         return self.atlasCache[descriptor]!
     }
 
+    /// Creates font atlas data for the specified font and dimensions.
+    ///
+    /// - Parameters:
+    ///   - font: The font to create atlas data for.
+    ///   - width: The width of the atlas texture.
+    ///   - height: The height of the atlas texture.
+    /// - Returns: A tuple containing the atlas data and glyph descriptors.
+    ///
+    /// This method creates the raw data and glyph descriptors for the font atlas.
     private func createFontAtlasData(
         font: UIFont,
         width: Int,
@@ -265,7 +289,7 @@ final public class MTLFontAtlasProvider {
         }
         // Interior distance negation pass; distances outside the figure are considered negative.
         for y in 0 ..< height {
-            for x in 0..<width {
+            for x in 0 ..< width {
                 if fontAtlasData[y * width + x] <= 0x7f {
                     distanceMap[y * width + x] = -distanceMap[y * width + x]
                 }

@@ -2,12 +2,19 @@ import CoreVideo
 import Metal
 
 public extension MTLPixelFormat {
+    /// Initializes an MTLPixelFormat from a CoreVideo OSType pixel format.
+    ///
+    /// - Parameter osType: The CoreVideo OSType pixel format to convert.
+    /// - Throws: MetalError.MTLPixelFormatError.incompatibleCVPixelFormat if there's no compatible MTLPixelFormat.
     init(osType: OSType) throws {
         guard let pixelFormat = osType.compatibleMTLPixelFormat
         else { throw MetalError.MTLPixelFormatError.incompatibleCVPixelFormat }
         self = pixelFormat
     }
 
+    /// Returns the compatible CoreVideo OSType pixel format for this MTLPixelFormat.
+    ///
+    /// - Returns: The compatible OSType pixel format, or nil if there's no direct match.
     var compatibleCVPixelFormat: OSType? {
         switch self {
         case .r8Unorm, .r8Unorm_srgb: return kCVPixelFormatType_OneComponent8

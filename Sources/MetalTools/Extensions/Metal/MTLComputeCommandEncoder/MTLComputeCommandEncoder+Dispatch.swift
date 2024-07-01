@@ -1,6 +1,12 @@
 import Metal
 
 public extension MTLComputeCommandEncoder {
+    /// Dispatches a 1D compute grid, covering at least the specified size.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The total number of threads to dispatch.
+    ///   - threadgroupWidth: The width of each threadgroup (default is the pipeline's thread execution width).
     func dispatch1d(
         state: MTLComputePipelineState,
         covering size: Int,
@@ -19,6 +25,12 @@ public extension MTLComputeCommandEncoder {
         self.dispatchThreadgroups(count, threadsPerThreadgroup: tgSize)
     }
 
+    /// Dispatches a 1D compute grid with exactly the specified size.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The exact number of threads to dispatch.
+    ///   - threadgroupWidth: The width of each threadgroup (default is the pipeline's thread execution width).
     func dispatch1d(
         state: MTLComputePipelineState,
         exactly size: Int,
@@ -37,6 +49,12 @@ public extension MTLComputeCommandEncoder {
         )
     }
 
+    /// Dispatches a 1D compute grid, using the most efficient method available on the device.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The number of threads to dispatch.
+    ///   - threadgroupWidth: The width of each threadgroup (default is the pipeline's thread execution width).
     func dispatch1d(
         state: MTLComputePipelineState,
         exactlyOrCovering size: Int,
@@ -57,6 +75,12 @@ public extension MTLComputeCommandEncoder {
         }
     }
 
+    /// Dispatches a 2D compute grid, covering at least the specified size.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The total size of the grid to dispatch.
+    ///   - threadgroupSize: The size of each threadgroup (default is the pipeline's max 2D threadgroup size).
     func dispatch2d(
         state: MTLComputePipelineState,
         covering size: MTLSize,
@@ -74,6 +98,12 @@ public extension MTLComputeCommandEncoder {
         self.dispatchThreadgroups(count, threadsPerThreadgroup: tgSize)
     }
 
+    /// Dispatches a 2D compute grid with exactly the specified size.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The exact size of the grid to dispatch.
+    ///   - threadgroupSize: The size of each threadgroup (default is the pipeline's max 2D threadgroup size).
     func dispatch2d(
         state: MTLComputePipelineState,
         exactly size: MTLSize,
@@ -85,6 +115,12 @@ public extension MTLComputeCommandEncoder {
         self.dispatchThreads(size, threadsPerThreadgroup: tgSize)
     }
 
+    /// Dispatches a 2D compute grid, using the most efficient method available on the device.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The size of the grid to dispatch.
+    ///   - threadgroupSize: The size of each threadgroup (default is the pipeline's max 2D threadgroup size).
     func dispatch2d(
         state: MTLComputePipelineState,
         exactlyOrCovering size: MTLSize,
@@ -105,6 +141,12 @@ public extension MTLComputeCommandEncoder {
         }
     }
 
+    /// Dispatches a 3D compute grid, covering at least the specified size.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The total size of the grid to dispatch.
+    ///   - threadgroupSize: The size of each threadgroup (default is the pipeline's max 2D threadgroup size).
     func dispatch3d(
         state: MTLComputePipelineState,
         covering size: MTLSize,
@@ -122,6 +164,12 @@ public extension MTLComputeCommandEncoder {
         self.dispatchThreadgroups(count, threadsPerThreadgroup: tgSize)
     }
 
+    /// Dispatches a 3D compute grid with exactly the specified size.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The exact size of the grid to dispatch.
+    ///   - threadgroupSize: The size of each threadgroup (default is the pipeline's max 2D threadgroup size).
     func dispatch3d(
         state: MTLComputePipelineState,
         exactly size: MTLSize,
@@ -133,6 +181,12 @@ public extension MTLComputeCommandEncoder {
         self.dispatchThreads(size, threadsPerThreadgroup: tgSize)
     }
 
+    /// Dispatches a 3D compute grid, using the most efficient method available on the device.
+    ///
+    /// - Parameters:
+    ///   - state: The compute pipeline state to use.
+    ///   - size: The size of the grid to dispatch.
+    ///   - threadgroupSize: The size of each threadgroup (default is the pipeline's max 2D threadgroup size).
     func dispatch3d(
         state: MTLComputePipelineState,
         exactlyOrCovering size: MTLSize,

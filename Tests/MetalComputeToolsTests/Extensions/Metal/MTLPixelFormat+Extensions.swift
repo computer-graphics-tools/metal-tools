@@ -1,4 +1,5 @@
 import MetalTools
+import Metal
 
 extension MTLPixelFormat {
     enum PrecisionFormat {

@@ -5,21 +5,31 @@ import MetalKit
 import MetalPerformanceShaders
 
 public extension MTLTexture {
+    /// A computed property that returns the MTLRegion covering the entire texture.
+    ///
+    /// The region's origin is set to zero and its size is set to the texture's size.
     var region: MTLRegion {
-        .init(
+        MTLRegion(
             origin: .zero,
             size: self.size
         )
     }
 
+    /// A computed property that returns the MTLSize representing the texture's dimensions.
+    ///
+    /// The size includes the texture's width, height, and depth.
     var size: MTLSize {
-        .init(
+        MTLSize(
             width: self.width,
             height: self.height,
             depth: self.depth
         )
     }
 
+    /// A computed property that returns an MTLTextureDescriptor configured to match the texture's properties.
+    ///
+    /// The descriptor includes width, height, depth, array length, storage mode,
+    /// CPU cache mode, usage, texture type, sample count, mipmap level count, and pixel format.
     var descriptor: MTLTextureDescriptor {
         let descriptor = MTLTextureDescriptor()
 
@@ -41,6 +51,16 @@ public extension MTLTexture {
         return descriptor
     }
 
+    /// Creates a new texture that matches the current texture's properties, with optional overrides.
+    ///
+    /// - Parameters:
+    ///   - usage: Optional. The usage for the new texture.
+    ///   - storage: Optional. The storage mode for the new texture.
+    /// - Returns: A new MTLTexture instance that matches the current texture's properties with the specified overrides.
+    /// - Throws: An error if the texture creation fails.
+    ///
+    /// This method creates a new texture using a descriptor that matches the current texture's properties.
+    /// You can optionally override the usage and storage mode.
     func matchingTexture(
         usage: MTLTextureUsage? = nil,
         storage: MTLStorageMode? = nil
@@ -60,6 +80,15 @@ public extension MTLTexture {
         return matchingTexture
     }
 
+    /// Creates a new MPSTemporaryImage that matches the current texture's properties, with optional overrides.
+    ///
+    /// - Parameters:
+    ///   - commandBuffer: The command buffer to use for the temporary image.
+    ///   - usage: Optional. The usage for the temporary image.
+    /// - Returns: A new MPSTemporaryImage instance that matches the current texture's properties with the specified usage.
+    ///
+    /// This method creates a new temporary image using a descriptor that matches the current texture's properties.
+    /// You can optionally override the usage.
     func matchingTemporaryImage(
         commandBuffer: MTLCommandBuffer,
         usage: MTLTextureUsage? = nil
@@ -75,6 +104,15 @@ public extension MTLTexture {
         return MPSTemporaryImage(commandBuffer: commandBuffer, textureDescriptor: matchingDescriptor)
     }
 
+    /// Creates a texture view for a specific slice and mipmap levels.
+    ///
+    /// - Parameters:
+    ///   - slice: The slice of the texture array to create the view for.
+    ///   - levels: Optional. The range of mipmap levels to include in the view. Defaults to the first level.
+    /// - Returns: An optional MTLTexture representing the view of the specified slice and levels.
+    ///
+    /// This method creates a texture view for a specified slice and range of mipmap levels.
+    /// It handles different texture types and ensures the slice is valid.
     func view(
         slice: Int,
         levels: Range<Int>? = nil
@@ -98,12 +136,17 @@ public extension MTLTexture {
             slices: slice..<(slice + 1)
         )
     }
-
+    
+    /// Creates a texture view for a specific mipmap level.
+    ///
+    /// - Parameter level: The mipmap level to create the view for.
+    /// - Returns: An optional MTLTexture representing the view of the specified mipmap level.
+    ///
+    /// This method creates a texture view for a specific mipmap level, using the first slice of the texture.
     func view(level: Int) -> MTLTexture? {
-        let levels = level ..< (level + 1)
-        return self.view(
+        self.view(
             slice: 0,
-            levels: levels
+            levels: level ..< (level + 1)
         )
     }
 }

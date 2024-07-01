@@ -1,4 +1,5 @@
 import MetalTools
+import Metal
 
 /// Switch Data Format Encoder
 ///

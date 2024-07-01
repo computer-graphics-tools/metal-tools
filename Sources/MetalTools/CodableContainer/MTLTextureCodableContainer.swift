@@ -1,13 +1,22 @@
 import Metal
 
+/// A container class that allows encoding and decoding of Metal textures.
 public class MTLTextureCodableContainer: Codable {
+    /// Errors that can occur during the initialization or texture creation process.
     public enum Error: Swift.Error {
+        /// Indicates that the base address for the texture data is missing.
         case missingBaseAddress
     }
 
     private let descriptor: MTLTextureDescriptorCodableContainer
     private var data: Data
 
+    /// Initializes a new `MTLTextureCodableContainer` from an existing Metal texture.
+    ///
+    /// This initializer copies the texture data and descriptor into the container.
+    ///
+    /// - Parameter texture: The Metal texture to encode.
+    /// - Throws: An error if the texture data cannot be accessed or copied.
     public init(texture: MTLTexture) throws {
         let descriptor = texture.descriptor
         self.descriptor = .init(descriptor: descriptor)
@@ -60,6 +69,11 @@ public class MTLTextureCodableContainer: Codable {
         self.data = data
     }
 
+    /// Creates a new Metal texture from the encoded data in this container.
+    ///
+    /// - Parameter device: The Metal device to use for creating the texture.
+    /// - Returns: A new `MTLTexture` instance.
+    /// - Throws: An error if the texture cannot be created or if the data cannot be copied.
     public func texture(device: MTLDevice) throws -> MTLTexture {
         guard let texture = device.makeTexture(descriptor: self.descriptor.descriptor)
         else { throw MetalError.MTLTextureSerializationError.allocationFailed }

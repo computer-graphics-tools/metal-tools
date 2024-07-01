@@ -1,7 +1,10 @@
 import Metal
 
+/// Extension to make the MTLTextureDescriptor conform to the Encodable protocol.
 extension MTLTextureDescriptor: Encodable {
-    internal enum CodingKeys: String, CodingKey {
+
+    /// Keys used for encoding the MTLTextureDescriptor properties.
+    enum CodingKey: String, Swift.CodingKey {
         case width
         case height
         case depth
@@ -16,10 +19,16 @@ extension MTLTextureDescriptor: Encodable {
         case allowGPUOptimizedContents
     }
 
+    /// Initializes a new MTLTextureDescriptor instance by decoding from the given decoder.
+    ///
+    /// - Parameter decoder: The decoder to read data from.
+    /// - Throws: An error if reading from the decoder fails, or if the data is corrupted or invalid.
+    ///
+    /// This initializer decodes the properties of the MTLTextureDescriptor from the provided decoder using the specified coding keys.
     public convenience init(from decoder: Decoder) throws {
         self.init()
 
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKey.self)
         self.width = try container.decode(Int.self, forKey: .width)
         self.height = try container.decode(Int.self, forKey: .height)
         self.depth = try container.decode(Int.self, forKey: .depth)
@@ -32,13 +41,21 @@ extension MTLTextureDescriptor: Encodable {
         self.pixelFormat = try container.decode(MTLPixelFormat.self, forKey: .pixelFormat)
 
         if #available(iOS 12, macOS 10.14, *) {
-            self.allowGPUOptimizedContents = try container.decodeIfPresent(Bool.self, forKey: .allowGPUOptimizedContents)
-                ?? true
+            self.allowGPUOptimizedContents = try container.decodeIfPresent(
+                Bool.self,
+                forKey: .allowGPUOptimizedContents
+            ) ?? true
         }
     }
 
+    /// Encodes the MTLTextureDescriptor instance into the given encoder.
+    ///
+    /// - Parameter encoder: The encoder to write data to.
+    /// - Throws: An error if encoding to the encoder fails.
+    ///
+    /// This method encodes the properties of the MTLTextureDescriptor into the provided encoder using the specified coding keys.
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: CodingKey.self)
 
         try container.encode(self.width, forKey: .width)
         try container.encode(self.height, forKey: .height)

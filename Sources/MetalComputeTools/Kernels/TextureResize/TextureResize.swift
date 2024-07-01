@@ -1,14 +1,28 @@
 import MetalTools
 
+/// A class for performing texture resizing using Metal.
 final public class TextureResize {
     // MARK: - Properties
 
+    /// The Metal compute pipeline state for the resize operation.
     public let pipelineState: MTLComputePipelineState
+
+    /// The Metal sampler state for texture sampling.
     private let samplerState: MTLSamplerState
+
+    /// A flag indicating if the device supports non-uniform threadgroups.
     private let deviceSupportsNonuniformThreadgroups: Bool
 
     // MARK: - Life Cycle
 
+    /// Creates a new instance of `TextureResize`.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context.
+    ///   - minMagFilter: The min/mag filter to use for the sampler.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This convenience initializer sets up the resize operation with the specified context and min/mag filter.
     public convenience init(
         context: MTLContext,
         minMagFilter: MTLSamplerMinMagFilter
@@ -23,6 +37,14 @@ final public class TextureResize {
         )
     }
 
+    /// Creates a new instance of `TextureResize`.
+    ///
+    /// - Parameters:
+    ///   - context: The Metal context.
+    ///   - samplerDescriptor: The sampler descriptor to use.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This convenience initializer sets up the resize operation with the specified context and sampler descriptor.
     public convenience init(
         context: MTLContext,
         samplerDescriptor: MTLSamplerDescriptor
@@ -33,6 +55,14 @@ final public class TextureResize {
         )
     }
 
+    /// Creates a new instance of `TextureResize`.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library to use.
+    ///   - minMagFilter: The min/mag filter to use for the sampler.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This convenience initializer sets up the resize operation with the specified library and min/mag filter.
     public convenience init(
         library: MTLLibrary,
         minMagFilter: MTLSamplerMinMagFilter
@@ -47,6 +77,14 @@ final public class TextureResize {
         )
     }
 
+    /// Creates a new instance of `TextureResize` with the specified library and sampler descriptor.
+    ///
+    /// - Parameters:
+    ///   - library: The Metal library to use for the resize operation.
+    ///   - samplerDescriptor: The sampler descriptor to use.
+    /// - Throws: An error if initialization fails.
+    ///
+    /// This initializer sets up the pipeline state and sampler state for the resize operation.
     public init(
         library: MTLLibrary,
         samplerDescriptor: MTLSamplerDescriptor
@@ -71,6 +109,14 @@ final public class TextureResize {
 
     // MARK: - Encode
 
+    /// Encodes the texture resize operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the resize operation using the provided textures and command buffer.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -83,6 +129,14 @@ final public class TextureResize {
         )
     }
 
+    /// Encodes the texture resize operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the resize operation using the provided textures and command encoder.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -95,6 +149,14 @@ final public class TextureResize {
         )
     }
 
+    /// Encodes the texture resize operation using the specified command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to use for encoding the operation.
+    ///
+    /// This method encodes the resize operation using the provided textures and command buffer.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,
@@ -110,6 +172,14 @@ final public class TextureResize {
         }
     }
 
+    /// Encodes the texture resize operation using the specified command encoder.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - encoder: The compute command encoder to use for encoding the operation.
+    ///
+    /// This method encodes the resize operation using the provided textures and command encoder.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,
@@ -135,5 +205,6 @@ final public class TextureResize {
         }
     }
 
+    /// The name of the Metal function used for texture resizing.
     public static let functionName = "textureResize"
 }

@@ -1,18 +1,29 @@
 import MetalTools
 
+/// A class that manages and applies a queue of Metal Performance Shaders (MPS) unary image kernels.
 final public class MPSUnaryImageKernels {
     // MARK: - Properties
 
+    /// The queue of MPS unary image kernels to be applied.
     public let kernelQueue: [MPSUnaryImageKernel]
 
     // MARK: - Life Cycle
 
+    /// Initializes a new instance of `MPSUnaryImageKernels`.
+    ///
+    /// - Parameter kernelQueue: An array of MPS unary image kernels to be applied in sequence.
     public init(kernelQueue: [MPSUnaryImageKernel]) {
         self.kernelQueue = kernelQueue
     }
 
     // MARK: - Encode
 
+    /// Encodes the application of the kernel queue into a command buffer.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to encode into.
     public func callAsFunction(
         source: MTLTexture,
         destination: MTLTexture,
@@ -25,6 +36,15 @@ final public class MPSUnaryImageKernels {
         )
     }
 
+    /// Encodes the application of the kernel queue into a command buffer.
+    ///
+    /// This method efficiently applies a sequence of MPS unary image kernels,
+    /// using temporary textures as intermediate buffers when necessary.
+    ///
+    /// - Parameters:
+    ///   - source: The source texture.
+    ///   - destination: The destination texture.
+    ///   - commandBuffer: The command buffer to encode into.
     public func encode(
         source: MTLTexture,
         destination: MTLTexture,

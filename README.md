@@ -1,5 +1,12 @@
 # MetalTools
 
+[![Platform Compatibility](https://img.shields.io/badge/Platforms-iOS%20|%20macOS-brightgreen)](https://swift.org/platforms/)
+[![Swift Version](https://img.shields.io/badge/Swift-5.9-orange)](https://swift.org)
+
+<p align="left">
+    <img src="Sources/MetalTools/MetalTools.docc/Resources/table-of-contents-art/metal-tools@2x.png", width="120">
+</p>
+
 ## Description
 
 MetalTools provides a convenient, Swifty way of working with Metal. This library is heavily used in computer vision startups [ZERO10](https://zero10.ar) and [Prisma](https://prisma-ai.com).
