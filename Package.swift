@@ -45,6 +45,7 @@ let package = Package(
             resources: [
                 .process("Kernels/BitonicSort/BitonicSort.metal"),
                 .process("Kernels/EuclideanDistance/EuclideanDistance.metal"),
+                .process("Kernels/IntegralImage/IntegralImage.metal"),
                 .process("Kernels/LookUpTable/LookUpTable.metal"),
                 .process("Kernels/MaskGuidedBlur/MaskGuidedBlur.metal"),
                 .process("Kernels/QuantizeDistanceField/QuantizeDistanceField.metal"),
