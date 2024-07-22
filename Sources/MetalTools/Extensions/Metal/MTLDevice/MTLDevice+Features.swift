@@ -26,6 +26,8 @@ public extension MTLDevice {
             return supportsFeatureSet(.iOS_GPUFamily4_v1)
             #elseif os(macOS)
             return supportsFeatureSet(.macOS_GPUFamily1_v3)
+            #elseif os(visionOS)
+            return false
             #endif
         case .tileShaders:
             return supportsFamily(.apple4)
@@ -50,7 +52,7 @@ public extension MTLDevice {
             var familiesWithReadWriteCubeMapSupport: [MTLGPUFamily] = [
                 .apple4, .apple5, .apple6, .apple7, .apple8, .mac2
             ]
-            if #available(iOS 16.0, macOS 13.0, *) {
+            if #available(iOS 16.0, macOS 13.0, visionOS 1.0, *) {
                 familiesWithReadWriteCubeMapSupport.append(.metal3)
             }
             for family in familiesWithReadWriteCubeMapSupport where supportsFamily(family) {

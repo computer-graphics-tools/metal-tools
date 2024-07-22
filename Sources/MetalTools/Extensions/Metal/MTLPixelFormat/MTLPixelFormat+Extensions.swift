@@ -335,7 +335,7 @@ public extension MTLPixelFormat {
         case .a8Unorm:
             return false
         case .rgb9e5Float:
-            #if os(iOS) && !targetEnvironment(macCatalyst)
+            #if (os(iOS) || os(visionOS)) && !targetEnvironment(macCatalyst)
             return true
             #elseif os(macOS) || (os(iOS) && targetEnvironment(macCatalyst))
             return false
