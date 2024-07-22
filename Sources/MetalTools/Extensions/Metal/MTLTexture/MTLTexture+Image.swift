@@ -5,7 +5,7 @@ import MetalKit
 import MetalPerformanceShaders
 
 public extension MTLTexture {
-    #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+    #if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
     typealias NSUIImage = UIImage
     #elseif os(macOS) && !targetEnvironment(macCatalyst)
     typealias NSUIImage = NSImage
@@ -174,7 +174,7 @@ public extension MTLTexture {
     /// This method first converts the texture to a `CGImage` and then creates a `NSUIImage` from it.
     func image(colorSpace: CGColorSpace? = nil) throws -> NSUIImage {
         let cgImage = try self.cgImage(colorSpace: colorSpace)
-        #if os(iOS)
+        #if (os(iOS) || os(visionOS))
         return UIImage(cgImage: cgImage)
         #elseif os(macOS)
         return NSImage(
