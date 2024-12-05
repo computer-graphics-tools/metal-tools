@@ -1,7 +1,7 @@
 import Metal
 
 /// Extension to make the MTLTextureDescriptor conform to the Encodable protocol.
-extension MTLTextureDescriptor: Encodable {
+extension MTLTextureDescriptor: @retroactive Encodable {
 
     /// Keys used for encoding the MTLTextureDescriptor properties.
     enum CodingKey: String, Swift.CodingKey {

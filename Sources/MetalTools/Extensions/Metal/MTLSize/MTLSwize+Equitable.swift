@@ -1,7 +1,7 @@
 import Metal
 
 /// Extension to make the MTLSize structure conform to the Equatable protocol.
-extension MTLSize: Equatable {
+extension MTLSize: @retroactive Equatable {
 
     /// Checks if two MTLSize instances are equal.
     ///

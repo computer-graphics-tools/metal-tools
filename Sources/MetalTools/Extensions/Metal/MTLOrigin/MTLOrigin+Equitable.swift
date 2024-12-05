@@ -1,7 +1,7 @@
 import Metal
 
 /// Extension to make `MTLOrigin` conform to the `Equatable` protocol.
-extension MTLOrigin: Equatable {
+extension MTLOrigin: @retroactive Equatable {
     /// Compares two `MTLOrigin` instances for equality.
     ///
     /// - Parameters:

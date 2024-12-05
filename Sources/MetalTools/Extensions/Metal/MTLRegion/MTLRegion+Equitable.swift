@@ -1,7 +1,7 @@
 import Metal
 
 /// Extension to make `MTLRegion` conform to the `Equatable` protocol.
-extension MTLRegion: Equatable {
+extension MTLRegion: @retroactive Equatable {
     /// Compares two `MTLRegion` instances for equality.
     ///
     /// Two `MTLRegion` instances are considered equal if they have the same origin and size.
