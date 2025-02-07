@@ -1,11 +1,43 @@
 import MetalTools
-import SIMDTools
 import simd
 
 /// A class for performing texture mixing using Metal.
 final public class TextureMix {
 
     // MARK: - Type Definitions
+
+    /// A floating point value that represents an angle
+
+    public struct Angle: Equatable {
+
+        /// The value of the angle in degrees
+        public let degrees: Float32
+
+        /// The value of the angle in radians
+        public var radians: Float32 {
+            self.degrees * Float32.pi / 180.0
+        }
+
+        /// Creates an instance using the value in radians
+        /// - Parameter radians: The angle value in radians
+        public init(radians val: Float32) {
+            self.degrees = val / Float32.pi * 180.0
+        }
+
+        /// Creates an instance using the value in degrees
+        /// - Parameter degrees: The angle value in degrees
+        public init(degrees val: Float32) {
+            self.degrees = val
+        }
+
+        /// Creates an instance using an internal value
+        /// - Parameter val: The angle value
+        init(_ val: Float32) {
+            self.degrees = val
+        }
+        
+        public static let zero = Angle(degrees: 0)
+    }
 
     /// Configuration structure for texture mixing.
     public struct Configuration: Equatable {

@@ -23,12 +23,6 @@ let package = Package(
             targets: ["MetalRenderingTools"]
         )
     ],
-    dependencies: [
-        .package(
-            url: "https://github.com/computer-graphics-tools/simd-tools.git",
-            .upToNextMajor(from: "0.0.3")
-        )
-    ],
     targets: [
         .target(name: "MetalTools"),
         .target(
@@ -39,8 +33,7 @@ let package = Package(
             name: "MetalComputeTools",
             dependencies: [
                 .target(name: "MetalComputeToolsSharedTypes"),
-                .target(name: "MetalTools"),
-                .product(name: "SIMDTools", package: "simd-tools")
+                .target(name: "MetalTools")
             ],
             resources: [
                 .process("Kernels/BitonicSort/BitonicSort.metal"),
